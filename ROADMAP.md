@@ -103,8 +103,6 @@
 ### 4.3 Thread Operations ✅
 - [x] Tool: Reply to thread (via existing `send_message` with `thread_ts`)
 - [x] Tool: Get thread replies (`get_thread_replies`)
-- [ ] Tool: Broadcast thread message (future enhancement)
-- [ ] Tool: Mark thread as read (future enhancement)
 
 ## Phase 5: Channel Management Tools
 
@@ -198,7 +196,11 @@
 - [ ] Tool: Get user activity data
 - [ ] Tool: Generate usage reports
 
-### 10.3 Webhooks & Events
+### 10.3 Advanced Thread Operations
+- [ ] Tool: Broadcast thread message
+- [ ] Tool: Mark thread as read
+
+### 10.4 Webhooks & Events
 - [ ] Set up event subscriptions
 - [ ] Handle real-time events
 - [ ] Webhook validation
