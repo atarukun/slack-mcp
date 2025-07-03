@@ -1,62 +1,71 @@
 # Slack MCP Server Development Roadmap
 
-This roadmap outlines the complete development plan for the Slack MCP Server, from initial setup to production-ready deployment.
+This roadmap outlines the complete development plan for the Slack MCP Server, from initial setup to production-ready deployment. Updated to follow official MCP development guidelines.
 
-## Phase 1: Project Foundation & Setup
+## Phase 1: Project Foundation  Setup
 
-### 1.1 Project Structure Setup
-- [ ] Create project directory structure
-- [ ] Initialize Python package structure
-- [ ] Set up Docker configuration
-- [ ] Create requirements.txt with dependencies
-- [ ] Set up development environment configuration
+### 1.1 Environment Setup (Following Official MCP Guidelines)
+- [ ] Install `uv` package manager for Python dependency management
+- [ ] Create project using `uv init slack-mcp`
+- [ ] Set up virtual environment with `uv venv` and activation
+- [ ] Install core MCP dependencies: `uv add "mcp[cli]" httpx`
+- [ ] Install Slack SDK: `uv add slack-sdk`
+- [ ] Install additional dependencies: `uv add python-dotenv pydantic`
+- [ ] Create main server file: `slack_mcp_server.py`
 
-### 1.2 Core Dependencies
-- [ ] MCP SDK for Python
-- [ ] Slack SDK for Python (`slack-sdk`)
-- [ ] FastAPI/Flask for HTTP endpoints (if needed)
-- [ ] Pydantic for data validation
-- [ ] Python-dotenv for environment management
-- [ ] Logging configuration
+### 1.2 Core Dependencies (MCP-Compliant)
+- [ ] **MCP SDK for Python** (`mcp[cli]`) - Official MCP protocol implementation
+- [ ] **FastMCP Framework** - For automatic tool definition generation
+- [ ] **Slack SDK for Python** (`slack-sdk`) - Official Slack API client
+- [ ] **httpx** - For async HTTP requests (MCP standard)
+- [ ] **Pydantic** - For data validation and schema definition
+- [ ] **Python-dotenv** - For secure environment variable management
 
-### 1.3 Docker Infrastructure
-- [ ] Create Dockerfile for Python application
-- [ ] Set up docker-compose.yml for development
-- [ ] Configure environment variable handling
-- [ ] Set up volume mounts for development
-- [ ] Create production Docker configuration
+### 1.3 MCP Server Architecture Setup
+- [ ] Initialize FastMCP server instance
+- [ ] Configure STDIO transport (primary MCP transport method)
+- [ ] Set up proper error handling framework
+- [ ] Implement MCP protocol compliance checks
+- [ ] Create server capabilities definition
 
-## Phase 2: MCP Protocol Implementation
+## Phase 2: MCP Server Implementation (Following Official Patterns)
 
-### 2.1 MCP Server Core
-- [ ] Implement MCP server base class
-- [ ] Set up MCP protocol handlers
-- [ ] Configure transport layer (stdio/server)
-- [ ] Implement tool registration system
-- [ ] Set up error handling framework
+### 2.1 FastMCP Server Core (Recommended Approach)
+- [ ] Initialize FastMCP server instance: `mcp = FastMCP("slack")`
+- [ ] Set up STDIO transport with `mcp.run(transport='stdio')`
+- [ ] Use `@mcp.tool()` decorators for automatic tool registration
+- [ ] Implement async tool functions with proper type hints
+- [ ] Configure server capabilities and metadata
 
-### 2.2 Authentication & Security
-- [ ] Implement Slack token validation
-- [ ] Set up secure environment variable handling
-- [ ] Add token type detection (Bot vs User)
-- [ ] Implement permission checking
-- [ ] Add rate limiting framework
+### 2.2 MCP Tool Definition Pattern
+- [ ] Follow MCP tool signature pattern: `async def tool_name(param: type) -> str:`
+- [ ] Use Python docstrings for tool descriptions
+- [ ] Implement proper parameter validation using type hints
+- [ ] Return structured text responses (not JSON objects)
+- [ ] Add comprehensive error handling in tool functions
+
+### 2.3 Authentication & Security
+- [ ] Implement Slack token validation using environment variables
+- [ ] Set up secure token storage pattern: `SLACK_BOT_TOKEN = os.getenv("SLACK_BOT_TOKEN")`
+- [ ] Add token type detection (Bot vs User tokens)
+- [ ] Implement proper error messages for authentication failures
+- [ ] Add rate limiting compliance with Slack API guidelines
 
 ## Phase 3: Core Slack API Integration
 
-### 3.1 Slack Client Setup
-- [ ] Initialize Slack WebClient
-- [ ] Implement authentication flow
-- [ ] Set up API error handling
-- [ ] Add retry logic for API calls
-- [ ] Implement rate limiting compliance
+### 3.1 Slack Client Setup (MCP Pattern)
+- [ ] Initialize async Slack WebClient with httpx
+- [ ] Implement helper functions for API requests (following weather server pattern)
+- [ ] Set up proper User-Agent headers for MCP identification
+- [ ] Add async error handling with try/catch blocks
+- [ ] Implement rate limiting compliance using async delays
 
 ### 3.2 Basic API Operations
-- [ ] Test connection to Slack API
-- [ ] Implement workspace info retrieval
-- [ ] Add basic error response handling
-- [ ] Set up logging for API calls
-- [ ] Create health check endpoints
+- [ ] Create `make_slack_request(url: str) -> dict | None` helper function
+- [ ] Test connection to Slack API with `auth.test` endpoint
+- [ ] Implement workspace info retrieval tool
+- [ ] Add proper error response formatting for MCP
+- [ ] Set up structured logging for debugging
 
 ## Phase 4: Messaging Tools
 
@@ -177,25 +186,34 @@ This roadmap outlines the complete development plan for the Slack MCP Server, fr
 - [ ] Handle real-time events
 - [ ] Webhook validation
 
-## Phase 11: Testing & Quality Assurance
+## Phase 11: MCP Testing & Integration
 
-### 11.1 Unit Testing
-- [ ] Test MCP protocol implementation
-- [ ] Test Slack API integrations
-- [ ] Test error handling scenarios
-- [ ] Test rate limiting functionality
+### 11.1 MCP Server Testing
+- [ ] Test server startup with `uv run slack_mcp_server.py`
+- [ ] Verify STDIO transport functionality
+- [ ] Test tool registration and discovery
+- [ ] Validate tool parameter schemas
+- [ ] Test error handling and response formatting
 
-### 11.2 Integration Testing
-- [ ] Test end-to-end workflows
-- [ ] Test with different token types
-- [ ] Test with various Slack workspaces
-- [ ] Performance testing
+### 11.2 Claude Desktop Integration
+- [ ] Create `claude_desktop_config.json` configuration
+- [ ] Configure server entry: `{"slack": {"command": "uv", "args": ["--directory", "/path/to/slack-mcp", "run", "slack_mcp_server.py"]}}`
+- [ ] Test server discovery in Claude Desktop
+- [ ] Verify tool availability in Claude interface
+- [ ] Test end-to-end tool execution
 
-### 11.3 Security Testing
-- [ ] Token security validation
-- [ ] Permission boundary testing
-- [ ] Input validation testing
-- [ ] Error message security review
+### 11.3 MCP Protocol Compliance
+- [ ] Validate MCP protocol message formatting
+- [ ] Test proper tool response structures
+- [ ] Verify server capabilities advertisement
+- [ ] Test graceful error handling and recovery
+- [ ] Validate transport layer stability
+
+### 11.4 Alternative Client Testing
+- [ ] Test with other MCP clients (for Linux compatibility)
+- [ ] Verify server works with custom MCP client implementations
+- [ ] Test programmatic MCP client connections
+- [ ] Validate server behavior across different client types
 
 ## Phase 12: Documentation & Deployment
 
@@ -205,11 +223,13 @@ This roadmap outlines the complete development plan for the Slack MCP Server, fr
 - [ ] Troubleshooting documentation
 - [ ] Security best practices guide
 
-### 12.2 Deployment Preparation
-- [ ] Production Docker configuration
-- [ ] Environment-specific configurations
-- [ ] Monitoring and logging setup
-- [ ] Health check implementation
+### 12.2 MCP-Compliant Deployment Preparation
+- [ ] Create production Dockerfile with `uv` and Python setup
+- [ ] Configure Docker entrypoint: `CMD ["uv", "run", "slack_mcp_server.py"]`
+- [ ] Set up environment variable injection for Slack tokens
+- [ ] Create docker-compose.yml for easy local deployment
+- [ ] Configure STDIO transport for container compatibility
+- [ ] Set up proper logging to stdout/stderr for container monitoring
 
 ### 12.3 CI/CD Pipeline
 - [ ] Automated testing pipeline
@@ -249,9 +269,33 @@ This roadmap outlines the complete development plan for the Slack MCP Server, fr
 
 **Total Estimated Timeline**: 7-11 weeks for full implementation
 
+## MCP Implementation Best Practices
+
+### Key MCP Patterns to Follow
+- **Use FastMCP Framework**: Leverages Python type hints and docstrings for automatic tool registration
+- **STDIO Transport**: Primary transport method for MCP servers (required for Claude Desktop)
+- **Async Functions**: All tools should be async for proper MCP performance
+- **Type Hints**: Essential for automatic parameter schema generation
+- **String Returns**: Tools should return formatted strings, not JSON objects
+- **Error Handling**: Graceful degradation with informative error messages
+
+### Server Configuration Requirements
+- **Absolute Paths**: Claude Desktop requires absolute paths in configuration
+- **uv Package Manager**: Recommended Python package manager for MCP projects
+- **Environment Variables**: Secure token storage using `.env` files
+- **Proper Logging**: Use stderr for logs, stdout for MCP protocol communication
+
+### Linux Compatibility Notes
+- Claude Desktop not available on Linux - test with alternative MCP clients
+- Build custom MCP client for testing if needed
+- Ensure server works with programmatic MCP connections
+- Validate STDIO transport compatibility across platforms
+
 ## Notes
 
-- This roadmap assumes familiarity with MCP protocol and Slack API
+- This roadmap follows official MCP development guidelines from modelcontextprotocol.io
+- Updated to use FastMCP framework for rapid development
+- Emphasizes STDIO transport for maximum compatibility
 - Timeline may vary based on complexity of specific features
 - Security and testing should be continuous throughout development
 - Regular feedback and iteration cycles are recommended
