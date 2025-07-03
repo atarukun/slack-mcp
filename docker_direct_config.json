@@ -1,0 +1,53 @@
+{
+  "configurations": {
+    "warp_docker_recommended": {
+      "description": "Recommended: Direct Docker configuration for Warp",
+      "config": {
+        "slack-mcp": {
+          "command": "docker",
+          "args": [
+            "run",
+            "--rm",
+            "-i",
+            "-e",
+            "SLACK_BOT_TOKEN=xoxb-your-actual-slack-bot-token",
+            "slack-mcp:latest"
+          ],
+          "env": {},
+          "working_directory": null,
+          "start_on_launch": true
+        }
+      }
+    },
+    "claude_desktop_wrapper": {
+      "description": "For Claude Desktop: Uses wrapper script",
+      "config": {
+        "mcpServers": {
+          "slack": {
+            "command": "/home/ataru/repos/slack-mcp/docker-wrapper.sh",
+            "args": [],
+            "env": {
+              "SLACK_BOT_TOKEN": "xoxb-your-actual-slack-bot-token"
+            }
+          }
+        }
+      }
+    },
+    "claude_desktop_direct": {
+      "description": "For Claude Desktop: Direct Docker command",
+      "config": {
+        "mcpServers": {
+          "slack": {
+            "command": "docker",
+            "args": [
+              "run", "--rm", "-i",
+              "-e", "SLACK_BOT_TOKEN=xoxb-your-actual-slack-bot-token",
+              "slack-mcp:latest"
+            ],
+            "env": {}
+          }
+        }
+      }
+    }
+  }
+}

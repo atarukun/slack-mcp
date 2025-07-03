@@ -1,0 +1,46 @@
+{
+  "configurations": {
+    "local_python": {
+      "description": "Direct Python execution with virtual environment",
+      "config": {
+        "mcpServers": {
+          "slack": {
+            "command": "/home/ataru/repos/slack-mcp/.venv/bin/python",
+            "args": ["/home/ataru/repos/slack-mcp/main.py"],
+            "env": {
+              "SLACK_BOT_TOKEN": "xoxb-your-actual-token"
+            }
+          }
+        }
+      }
+    },
+    "uv_execution": {
+      "description": "Using uv run for proper dependency management",
+      "config": {
+        "mcpServers": {
+          "slack": {
+            "command": "uv",
+            "args": ["run", "--project", "/home/ataru/repos/slack-mcp", "python", "main.py"],
+            "env": {
+              "SLACK_BOT_TOKEN": "xoxb-your-actual-token"
+            }
+          }
+        }
+      }
+    },
+    "docker_container": {
+      "description": "Using Docker container (requires wrapper script)",
+      "config": {
+        "mcpServers": {
+          "slack": {
+            "command": "/home/ataru/repos/slack-mcp/docker-wrapper.sh",
+            "args": [],
+            "env": {
+              "SLACK_BOT_TOKEN": "xoxb-your-actual-token"
+            }
+          }
+        }
+      }
+    }
+  }
+}

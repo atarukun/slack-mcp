@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "slack": {
+      "command": "python",
+      "args": ["/home/ataru/repos/slack-mcp/main.py"],
+      "env": {
+        "SLACK_BOT_TOKEN": "your-slack-bot-token-here"
+      }
+    }
+  }
+}
