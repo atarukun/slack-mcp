@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  # Development service
+  slack-mcp-dev:
+    build:
+      context: .
+      target: development
+    container_name: slack-mcp-dev
+    volumes:
+      - .:/app
+      - /app/.venv  # Anonymous volume for virtual environment
+    environment:
+      - SLACK_BOT_TOKEN=${SLACK_BOT_TOKEN}
+      - SLACK_USER_TOKEN=${SLACK_USER_TOKEN}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    stdin_open: true
+    tty: true
+    networks:
+      - slack-mcp-network
+
+  # Production service
+  slack-mcp-prod:
+    build:
+      context: .
+      target: production
+    container_name: slack-mcp-prod
+    environment:
+      - SLACK_BOT_TOKEN=${SLACK_BOT_TOKEN}
+      - SLACK_USER_TOKEN=${SLACK_USER_TOKEN}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    restart: unless-stopped
+    networks:
+      - slack-mcp-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Testing service
+  slack-mcp-test:
+    build:
+      context: .
+      target: development
+    container_name: slack-mcp-test
+    volumes:
+      - .:/app
+    environment:
+      - SLACK_BOT_TOKEN=${SLACK_BOT_TOKEN:-test-token}
+      - SLACK_USER_TOKEN=${SLACK_USER_TOKEN:-test-token}
+      - LOG_LEVEL=DEBUG
+    command: ["uv", "run", "pytest", "-v"]
+    networks:
+      - slack-mcp-network
+
+networks:
+  slack-mcp-network:
+    driver: bridge
