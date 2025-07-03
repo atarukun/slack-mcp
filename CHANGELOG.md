@@ -5,6 +5,111 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2025-07-03
+
+### 🚀 Phase 4: Extended Messaging Tools
+
+This release adds comprehensive messaging management capabilities, expanding from 7 to 15 production-ready MCP tools.
+
+### ✨ Features Added
+
+#### 📝 **Message Management**
+- **`update_message`**: Edit and update existing messages with new text, blocks, and attachments
+- **`delete_message`**: Remove messages from channels with proper error handling
+- **`pin_message`**: Pin important messages to channels for visibility
+- **`unpin_message`**: Remove pinned messages from channels
+- **`get_message_permalink`**: Generate shareable links to specific messages
+
+#### ⏰ **Message Scheduling**
+- **`schedule_message`**: Schedule messages for future delivery with Unix timestamp support
+- Full support for rich formatting (blocks and attachments) in scheduled messages
+- Comprehensive scheduling feedback with formatted timestamps
+
+#### 🧵 **Thread Operations**
+- **`get_thread_replies`**: Retrieve and display thread conversations with full formatting
+- Enhanced thread navigation with parent message context
+- Comprehensive reply listing with timestamps and user information
+- Configurable reply limits (up to 1000 messages)
+
+#### 💬 **Direct Messaging**
+- **`send_direct_message`**: Send private messages directly to users
+- Automatic DM conversation opening and management
+- Full support for rich formatting in direct messages
+- User-friendly recipient identification
+
+### 🔧 Technical Improvements
+
+#### **Enhanced Error Handling**
+- Consistent error formatting across all new tools
+- Comprehensive Slack API error translation
+- Improved user feedback with specific error messages
+- Graceful handling of edge cases and API limitations
+
+#### **Async Operations**
+- All new tools implement full async/await patterns
+- Consistent rate limiting across extended messaging operations
+- Optimized API call patterns for better performance
+- Proper resource management for concurrent operations
+
+#### **Response Formatting**
+- Rich, user-friendly output formatting for all tools
+- Consistent emoji usage for visual clarity
+- Comprehensive status reporting with detailed information
+- Proper truncation for long content with visual indicators
+
+### 🛠️ **Implementation Details**
+
+#### **Code Organization**
+- Clean separation of Phase 4 tools with clear commenting
+- Consistent parameter validation using existing patterns
+- Reuse of established helper functions (`make_slack_request`, `init_async_client`)
+- Maintained code style and documentation standards
+
+#### **Version Management**
+- Version bumped to 1.1.0 for feature release
+- Updated test scripts to verify all 15 tools
+- Enhanced tool discovery and validation
+- Maintained backward compatibility with existing tools
+
+### 📊 **Current Capabilities**
+
+**15 Production-Ready MCP Tools:**
+- **Authentication**: `set_slack_token`, `test_slack_connection`
+- **Basic Messaging**: `send_message`, `send_direct_message`
+- **Message Management**: `update_message`, `delete_message`, `pin_message`, `unpin_message`
+- **Advanced Features**: `schedule_message`, `get_message_permalink`, `get_thread_replies`
+- **Workspace Discovery**: `list_channels`, `get_channel_info`, `get_user_info`
+- **File Operations**: `upload_file`
+
+### 🧪 **Testing & Validation**
+
+- All 15 tools successfully registered and validated
+- Container builds tested and verified
+- Tool discovery functioning properly
+- Async operations tested for consistency
+- Error handling validated across all new tools
+
+### 🔮 **Future Development**
+
+Phase 4 completion sets the foundation for:
+- **Phase 5**: Channel Management Tools
+- **Phase 6**: User Management Tools  
+- **Phase 7**: Advanced File Operations
+- **Phases 8-13**: Search, interactions, analytics, and production features
+
+### 🏆 **Achievement Summary**
+
+✅ **8 new messaging tools** implemented and tested  
+✅ **Doubled tool count** from 7 to 15 production-ready tools  
+✅ **Extended messaging capabilities** covering all major message operations  
+✅ **Maintained code quality** and consistency standards  
+✅ **Full async implementation** with proper error handling  
+✅ **Comprehensive testing** and validation completed  
+
+---
+
+*Phase 4 represents a significant expansion of messaging capabilities, providing users with comprehensive control over Slack message operations while maintaining the high quality and reliability standards established in previous phases.*
+
 ## [1.0.0] - 2025-07-03
 
 ### 🎉 Initial Release

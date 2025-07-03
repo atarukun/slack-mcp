@@ -1,6 +1,6 @@
 [project]
 name = "slack-mcp"
-version = "1.0.0"
+version = "1.1.0"
 description = "A comprehensive MCP server for Slack API operations"
 readme = "README.md"
 authors = [
