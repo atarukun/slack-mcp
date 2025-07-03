@@ -1,17 +1,24 @@
 # Slack MCP Server Development Roadmap
 
-This roadmap outlines the complete development plan for the Slack MCP Server, from initial setup to production-ready deployment. Updated to follow official MCP development guidelines.
+**PRIMARY GOAL: Build a production-ready Docker container** that provides comprehensive Slack API integration through the Model Context Protocol (MCP). This roadmap outlines the complete development plan from initial setup to a containerized, deployable MCP server.
 
-## Phase 1: Project Foundation  Setup
+**Container-First Approach**: All development, testing, and deployment will be designed with Docker containerization as the primary delivery method.
 
-### 1.1 Environment Setup (Following Official MCP Guidelines)
-- [ ] Install `uv` package manager for Python dependency management
-- [ ] Create project using `uv init slack-mcp`
-- [ ] Set up virtual environment with `uv venv` and activation
+## Phase 1: Docker-First Project Foundation & Setup
+
+### 1.1 Docker Environment Setup (Container-First Development)
+- [ ] Create `Dockerfile` for Python 3.10+ with `uv` package manager
+- [ ] Set up `docker-compose.yml` for development workflow
+- [ ] Configure multi-stage Docker build (development + production)
+- [ ] Create `.dockerignore` for efficient container builds
+- [ ] Set up volume mounts for development iteration
+- [ ] Install `uv` package manager in container: `RUN curl -LsSf https://astral.sh/uv/install.sh | sh`
+- [ ] Create project using `uv init slack-mcp` in container
 - [ ] Install core MCP dependencies: `uv add "mcp[cli]" httpx`
 - [ ] Install Slack SDK: `uv add slack-sdk`
 - [ ] Install additional dependencies: `uv add python-dotenv pydantic`
 - [ ] Create main server file: `slack_mcp_server.py`
+- [ ] Configure container entrypoint: `CMD ["uv", "run", "slack_mcp_server.py"]`
 
 ### 1.2 Core Dependencies (MCP-Compliant)
 - [ ] **MCP SDK for Python** (`mcp[cli]`) - Official MCP protocol implementation
@@ -21,12 +28,21 @@ This roadmap outlines the complete development plan for the Slack MCP Server, fr
 - [ ] **Pydantic** - For data validation and schema definition
 - [ ] **Python-dotenv** - For secure environment variable management
 
-### 1.3 MCP Server Architecture Setup
-- [ ] Initialize FastMCP server instance
+### 1.3 Docker Container Architecture
+- [ ] Design container layers: base Python → uv → dependencies → application
+- [ ] Configure health checks for container monitoring
+- [ ] Set up proper signal handling for graceful container shutdown
+- [ ] Design environment variable injection strategy
+- [ ] Create container-optimized logging configuration
+- [ ] Set up container networking for MCP STDIO transport
+
+### 1.4 MCP Server Architecture Setup
+- [ ] Initialize FastMCP server instance in containerized environment
 - [ ] Configure STDIO transport (primary MCP transport method)
 - [ ] Set up proper error handling framework
 - [ ] Implement MCP protocol compliance checks
 - [ ] Create server capabilities definition
+- [ ] Ensure container compatibility with MCP protocol
 
 ## Phase 2: MCP Server Implementation (Following Official Patterns)
 
@@ -186,42 +202,76 @@ This roadmap outlines the complete development plan for the Slack MCP Server, fr
 - [ ] Handle real-time events
 - [ ] Webhook validation
 
-## Phase 11: MCP Testing & Integration
+## Phase 11: Docker Container Development & Testing
 
-### 11.1 MCP Server Testing
-- [ ] Test server startup with `uv run slack_mcp_server.py`
-- [ ] Verify STDIO transport functionality
-- [ ] Test tool registration and discovery
-- [ ] Validate tool parameter schemas
-- [ ] Test error handling and response formatting
+### 11.1 Container Development
+- [ ] Create multi-stage Dockerfile (development and production stages)
+- [ ] Set up development docker-compose.yml with volume mounts
+- [ ] Configure production docker-compose.yml with environment variables
+- [ ] Test container builds: `docker build -t slack-mcp-server .`
+- [ ] Verify container startup: `docker run slack-mcp-server`
+- [ ] Test container environment variable injection
+- [ ] Validate container health checks and monitoring
 
-### 11.2 Claude Desktop Integration
-- [ ] Create `claude_desktop_config.json` configuration
-- [ ] Configure server entry: `{"slack": {"command": "uv", "args": ["--directory", "/path/to/slack-mcp", "run", "slack_mcp_server.py"]}}`
-- [ ] Test server discovery in Claude Desktop
-- [ ] Verify tool availability in Claude interface
-- [ ] Test end-to-end tool execution
+### 11.2 Container-Client Bridge Development
+- [ ] Create host-side wrapper scripts for MCP client integration
+- [ ] Design `docker run` wrapper that preserves STDIO transport
+- [ ] Implement volume mounting strategy for executable access
+- [ ] Create shell script: `slack-mcp-wrapper.sh` that calls container
+- [ ] Test wrapper script with Claude Desktop configuration
+- [ ] Develop cross-platform wrapper scripts (bash, PowerShell, batch)
+- [ ] Create containerized HTTP/WebSocket transport alternative
+- [ ] Design fallback mechanisms for different client types
 
-### 11.3 MCP Protocol Compliance
-- [ ] Validate MCP protocol message formatting
-- [ ] Test proper tool response structures
-- [ ] Verify server capabilities advertisement
-- [ ] Test graceful error handling and recovery
-- [ ] Validate transport layer stability
+### 11.3 MCP Server Testing in Container
+- [ ] Test MCP server startup within container environment
+- [ ] Verify STDIO transport functionality in containerized setup
+- [ ] Test tool registration and discovery from container
+- [ ] Validate tool parameter schemas in container context
+- [ ] Test error handling and response formatting in container
+- [ ] Verify container log output and debugging capabilities
+- [ ] Test wrapper script functionality with real MCP clients
 
-### 11.4 Alternative Client Testing
+### 11.4 Hybrid Distribution Strategy
+- [ ] Create standalone executable option alongside container
+- [ ] Build PyInstaller/Nuitka binary for direct MCP client integration
+- [ ] Design distribution matrix: container for scalability, executable for clients
+- [ ] Create installation scripts for both deployment methods
+- [ ] Document when to use containers vs standalone executables
+- [ ] Test both distribution methods with various MCP clients
+
+### 11.5 Claude Desktop Integration Testing
+- [ ] Test wrapper script with Claude Desktop configuration
+- [ ] Configure wrapper in `claude_desktop_config.json`: `{"slack": {"command": "/path/to/slack-mcp-wrapper.sh"}}`
+- [ ] Test volume-mounted executable approach
+- [ ] Verify tool discovery and execution through container bridge
+- [ ] Test standalone executable integration as fallback
+- [ ] Validate end-to-end tool execution in both modes
+
+### 11.6 MCP Protocol Compliance
+- [ ] Validate MCP protocol message formatting in container context
+- [ ] Test proper tool response structures from containerized server
+- [ ] Verify server capabilities advertisement through wrapper
+- [ ] Test graceful error handling and recovery in container
+- [ ] Validate transport layer stability across integration methods
+
+### 11.7 Alternative Client Testing
 - [ ] Test with other MCP clients (for Linux compatibility)
 - [ ] Verify server works with custom MCP client implementations
-- [ ] Test programmatic MCP client connections
+- [ ] Test programmatic MCP client connections to container
 - [ ] Validate server behavior across different client types
+- [ ] Test HTTP/WebSocket transport alternatives for container compatibility
 
 ## Phase 12: Documentation & Deployment
 
-### 12.1 Documentation
+### 12.1 Container Integration Documentation
+- [ ] Container deployment guide with wrapper script examples
+- [ ] Claude Desktop integration patterns documentation
+- [ ] Alternative transport method setup guides
+- [ ] Cross-platform installation scripts and usage
+- [ ] Troubleshooting guide for container-client connectivity
 - [ ] API documentation for all tools
-- [ ] Setup and configuration guide
-- [ ] Troubleshooting documentation
-- [ ] Security best practices guide
+- [ ] Security best practices for containerized MCP servers
 
 ### 12.2 MCP-Compliant Deployment Preparation
 - [ ] Create production Dockerfile with `uv` and Python setup
@@ -231,19 +281,30 @@ This roadmap outlines the complete development plan for the Slack MCP Server, fr
 - [ ] Configure STDIO transport for container compatibility
 - [ ] Set up proper logging to stdout/stderr for container monitoring
 
-### 12.3 CI/CD Pipeline
-- [ ] Automated testing pipeline
-- [ ] Docker image building
-- [ ] Security scanning
-- [ ] Deployment automation
+### 12.3 Container Registry & Distribution
+- [ ] Set up Docker registry (Docker Hub, GitHub Container Registry, or private registry)
+- [ ] Configure automated container image builds
+- [ ] Create versioned container tags (latest, semver, commit SHA)
+- [ ] Set up container image security scanning
+- [ ] Document container deployment instructions
+- [ ] Create example docker-compose files for different use cases
 
-## Phase 13: Production & Maintenance
+### 12.4 CI/CD Pipeline for Container Delivery
+- [ ] Automated testing pipeline for container builds
+- [ ] Multi-architecture Docker image building (amd64, arm64)
+- [ ] Container security scanning in CI pipeline
+- [ ] Automated container deployment to registry
+- [ ] Release automation with container versioning
 
-### 13.1 Production Deployment
-- [ ] Production environment setup
-- [ ] Monitoring and alerting
-- [ ] Log aggregation
-- [ ] Backup and recovery procedures
+## Phase 13: Production Container Deployment & Maintenance
+
+### 13.1 Production Container Deployment
+- [ ] Production-ready container orchestration (Docker Compose, Kubernetes, etc.)
+- [ ] Container health monitoring and alerting
+- [ ] Container log aggregation and analysis
+- [ ] Container backup and recovery procedures
+- [ ] Container resource optimization and scaling
+- [ ] Container security hardening and updates
 
 ### 13.2 Maintenance & Updates
 - [ ] Regular dependency updates
@@ -253,12 +314,15 @@ This roadmap outlines the complete development plan for the Slack MCP Server, fr
 
 ## Success Criteria
 
-- ✅ **Functional**: All core Slack operations work reliably
-- ✅ **Secure**: Proper token handling and permission management
-- ✅ **Performant**: Respects rate limits and handles high loads
-- ✅ **Documented**: Comprehensive documentation for users and developers
-- ✅ **Tested**: High test coverage with integration tests
-- ✅ **Maintainable**: Clean, modular code structure
+- ✅ **Containerized**: Production-ready Docker image that can be deployed anywhere
+- ✅ **Functional**: All core Slack operations work reliably within container
+- ✅ **Secure**: Proper token handling and permission management in containerized environment
+- ✅ **Performant**: Respects rate limits and handles high loads in container
+- ✅ **Documented**: Comprehensive documentation for container deployment and usage
+- ✅ **Tested**: High test coverage with container-based integration tests
+- ✅ **Maintainable**: Clean, modular code structure optimized for containerization
+- ✅ **Portable**: Container runs consistently across development, staging, and production
+- ✅ **Scalable**: Container can be orchestrated and scaled as needed
 
 ## Timeline Estimates
 
