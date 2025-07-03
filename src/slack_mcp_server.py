@@ -822,31 +822,39 @@ async def schedule_message(
         if not async_client:
             return "❌ Failed to initialize async Slack client"
         
-        # Schedule message with rate limiting
-        response = await make_slack_request(
-            async_client.chat_scheduleMessage,
-            channel=channel,
-            text=text,
-            post_at=post_at,
-            blocks=blocks,
-            attachments=attachments
-        )
+        # Apply rate limiting first
+        await rate_limit_check()
         
-        if response:
-            scheduled_time = datetime.fromtimestamp(post_at).strftime('%Y-%m-%d %H:%M:%S UTC')
+        # Make direct API call with enhanced error handling
+        try:
+            response = await async_client.chat_scheduleMessage(
+                channel=channel,
+                text=text,
+                post_at=post_at,
+                blocks=blocks,
+                attachments=attachments
+            )
             
-            result = "✅ **Message Scheduled Successfully**\n\n"
-            result += f"• **Channel:** {response.get('channel', 'N/A')}\n"
-            result += f"• **Scheduled Message ID:** {response.get('scheduled_message_id', 'N/A')}\n"
-            result += f"• **Post Time:** {scheduled_time}\n"
-            result += f"• **Message:** {text[:100]}{'...' if len(text) > 100 else ''}\n"
-            
-            if blocks:
-                result += f"• **Rich Formatting:** {len(blocks)} block(s)\n"
+            if response.get("ok"):
+                scheduled_time = datetime.fromtimestamp(post_at).strftime('%Y-%m-%d %H:%M:%S UTC')
                 
-            return result
-        else:
-            return "❌ Failed to schedule message: API request failed"
+                result = "✅ **Message Scheduled Successfully**\n\n"
+                result += f"• **Channel:** {response.get('channel', 'N/A')}\n"
+                result += f"• **Scheduled Message ID:** {response.get('scheduled_message_id', 'N/A')}\n"
+                result += f"• **Post Time:** {scheduled_time}\n"
+                result += f"• **Message:** {text[:100]}{'...' if len(text) > 100 else ''}\n"
+                
+                if blocks:
+                    result += f"• **Rich Formatting:** {len(blocks)} block(s)\n"
+                    
+                return result
+            else:
+                error_msg = response.get('error', 'Unknown error')
+                return f"❌ Failed to schedule message: {error_msg}\n\nFull response: {response}"
+                
+        except SlackApiError as api_error:
+            error_detail = api_error.response.get('error', 'Unknown API error')
+            return f"❌ Slack API Error in scheduling: {error_detail}\n\nDetails: {api_error.response}"
             
     except ValueError as e:
         return f"❌ Configuration Error: {str(e)}"
