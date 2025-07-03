@@ -1,7 +1,7 @@
 # Slack MCP Server Dockerfile
 # Multi-stage build for development and production
 
-FROM python:3.11-slim AS base
+FROM python:3.12 AS base
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -38,25 +38,28 @@ FROM base AS production
 
 # Copy only necessary files
 COPY pyproject.toml uv.lock ./
+COPY main.py ./
 COPY src/ ./src/
 
 # Create virtual environment and install dependencies
 RUN uv venv
 RUN . .venv/bin/activate && uv sync --frozen
 
-# Create non-root user for security
-RUN useradd --create-home --shell /bin/bash mcp
-RUN chown -R mcp:mcp /app
-USER mcp
-
 # Set environment variables
 ENV PYTHONPATH=/app
 ENV PYTHONUNBUFFERED=1
 ENV PATH="/app/.venv/bin:$PATH"
+
+# Create non-root user for security
+RUN useradd --create-home --shell /bin/bash mcp
+
+# Change ownership after all setup is complete
+RUN chown -R mcp:mcp /app
+USER mcp
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD python -c "import sys; sys.exit(0)"
 
 # Default command
-CMD ["uv", "run", "src/slack_mcp_server.py"]
+CMD ["/app/.venv/bin/python", "main.py"]
