@@ -1,4 +1,7 @@
 # src/slack_mcp_server.py
+# Slack MCP Server - A comprehensive MCP server for Slack API operations
+# Copyright (c) 2025 Brennon Church
+# Licensed under the MIT License
 
 import os
 import logging

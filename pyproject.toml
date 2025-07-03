@@ -1,8 +1,12 @@
 [project]
 name = "slack-mcp"
-version = "0.1.0"
-description = "Add your description here"
+version = "1.0.0"
+description = "A comprehensive MCP server for Slack API operations"
 readme = "README.md"
+authors = [
+    {name = "Brennon Church", email = "atarukun@gmail.com"}
+]
+license = {text = "MIT"}
 requires-python = ">=3.12"
 dependencies = [
     "aiohttp>=3.12.13",

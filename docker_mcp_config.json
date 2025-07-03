@@ -1,0 +1,16 @@
+{
+  "slack-mcp": {
+    "command": "docker",
+    "args": [
+      "run",
+      "--rm",
+      "-i",
+      "-e",
+      "SLACK_BOT_TOKEN=xoxb-your-actual-slack-bot-token",
+      "slack-mcp:latest"
+    ],
+    "env": {},
+    "working_directory": null,
+    "start_on_launch": true
+  }
+}
