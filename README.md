@@ -99,13 +99,14 @@ See [CONFIGURATION_GUIDE.md](CONFIGURATION_GUIDE.md) for detailed setup instruct
 
 ## 📊 Current Status
 
-**Version**: 1.0.0 (Stable Release)  
-**Phases Completed**: 3 of 13 (Core functionality complete)  
-**Tools Available**: 7 production-ready MCP tools  
+**Version**: 1.1.0 (Phase 4 Release)  
+**Phases Completed**: 4 of 13 (Extended messaging complete)  
+**Tools Available**: 15 production-ready MCP tools  
 **Testing**: Verified with ILDM workspace  
 
 ### **Available Tools**
 
+#### **Core Tools (Phases 1-3)**
 1. **`set_slack_token`** - Configure authentication
 2. **`test_slack_connection`** - Verify connectivity and workspace info
 3. **`send_message`** - Send formatted messages to channels/users
@@ -113,6 +114,16 @@ See [CONFIGURATION_GUIDE.md](CONFIGURATION_GUIDE.md) for detailed setup instruct
 5. **`list_channels`** - Explore workspace channels with categorization
 6. **`get_user_info`** - Retrieve comprehensive user profiles
 7. **`upload_file`** - Upload files with metadata and comments
+
+#### **Extended Messaging Tools (Phase 4)**
+8. **`update_message`** - Edit/update existing messages
+9. **`delete_message`** - Delete messages from channels
+10. **`pin_message`** - Pin important messages to channels
+11. **`unpin_message`** - Unpin messages from channels
+12. **`get_message_permalink`** - Generate shareable message links
+13. **`schedule_message`** - Schedule messages for future delivery
+14. **`get_thread_replies`** - Retrieve and display thread conversations
+15. **`send_direct_message`** - Send private messages to users
 
 ## 📖 Documentation
 

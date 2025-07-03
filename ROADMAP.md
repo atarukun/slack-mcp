@@ -84,27 +84,27 @@
 - [x] Add proper error response formatting for MCP
 - [x] Set up structured logging for debugging
 
-## Phase 4: Messaging Tools
+## Phase 4: Messaging Tools ✅ **COMPLETED**
 
-### 4.1 Send Messages
-- [ ] Tool: Send message to channel
-- [ ] Tool: Send direct message to user
-- [ ] Tool: Send message to thread
-- [ ] Support for rich text formatting
-- [ ] Support for message attachments
+### 4.1 Send Messages ✅
+- [x] Tool: Send message to channel (enhanced from Phase 3)
+- [x] Tool: Send direct message to user (`send_direct_message`)
+- [x] Tool: Send message to thread (via `thread_ts` parameter)
+- [x] Support for rich text formatting (blocks and attachments)
+- [x] Support for message attachments
 
-### 4.2 Message Management
-- [ ] Tool: Update/edit messages
-- [ ] Tool: Delete messages
-- [ ] Tool: Pin/unpin messages
-- [ ] Tool: Get message permalink
-- [ ] Tool: Schedule messages
+### 4.2 Message Management ✅
+- [x] Tool: Update/edit messages (`update_message`)
+- [x] Tool: Delete messages (`delete_message`)
+- [x] Tool: Pin/unpin messages (`pin_message`, `unpin_message`)
+- [x] Tool: Get message permalink (`get_message_permalink`)
+- [x] Tool: Schedule messages (`schedule_message`)
 
-### 4.3 Thread Operations
-- [ ] Tool: Reply to thread
-- [ ] Tool: Get thread replies
-- [ ] Tool: Broadcast thread message
-- [ ] Tool: Mark thread as read
+### 4.3 Thread Operations ✅
+- [x] Tool: Reply to thread (via existing `send_message` with `thread_ts`)
+- [x] Tool: Get thread replies (`get_thread_replies`)
+- [ ] Tool: Broadcast thread message (future enhancement)
+- [ ] Tool: Mark thread as read (future enhancement)
 
 ## Phase 5: Channel Management Tools
 
