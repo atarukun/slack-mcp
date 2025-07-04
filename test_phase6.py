@@ -17,7 +17,7 @@ from slack_mcp_server import (
     init_async_client,
     get_user_info,
     list_workspace_members,
-    search_users,
+    search_slack_users,
     get_user_presence,
     get_user_timezone,
     get_user_conversations
@@ -65,17 +65,17 @@ class TestPhase6:
         
         # Search for bot user
         print("--- Searching for 'bot' ---")
-        result = await search_users("bot")
+        result = await search_slack_users("bot")
         print(result)
         
         # Search for admin
         print("\n--- Searching for 'admin' ---")
-        result = await search_users("admin")
+        result = await search_slack_users("admin")
         print(result)
         
         # Search that likely won't find anything
         print("\n--- Searching for 'xyz123unlikely' ---")
-        result = await search_users("xyz123unlikely")
+        result = await search_slack_users("xyz123unlikely")
         print(result)
     
     async def test_get_user_presence(self):

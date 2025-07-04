@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Phase 6: User Management Tools** (6 new tools)
   - `get_user_info` - Get detailed information about a Slack user
   - `list_workspace_members` - List all members in the workspace with categorization
-  - `search_users` - Search for users by name, email, or title
+  - `search_slack_users` - Search for users by name, email, or title
   - `get_user_presence` - Get a user's current presence status
   - `get_user_timezone` - Get a user's timezone information
   - `get_user_conversations` - List all conversations a user is member of
@@ -21,6 +21,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated ROADMAP to move deferred channel settings from Phase 5.3 to Phase 10.5
 - Tool count increased from 24 to 30 production-ready tools
 - Moved user token required operations to Phase 10.6 in ROADMAP
+
+### Fixed
+- Fixed `get_user_info` returning JSON instead of formatted text (issue #8)
+- Renamed `search_users` to `search_slack_users` to avoid naming conflicts (issue #8)
 
 ### Technical Improvements
 - Added user categorization (admins, regular users, bots) in listing tools

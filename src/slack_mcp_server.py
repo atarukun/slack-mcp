@@ -440,57 +440,6 @@ async def list_channels(types: Optional[str] = "public_channel", limit: int = 10
     except Exception as e:
         return f"❌ Unexpected Error: {str(e)}"
 
-@mcp.tool("get_user_info")
-def get_user_info(user: str) -> Dict[str, Any]:
-    """
-    Get information about a Slack user.
-    
-    Args:
-        user: User ID or email address
-    
-    Returns:
-        User information including name, profile details, status, etc.
-    """
-    try:
-        validate_slack_token()
-        
-        response = slack_client.users_info(user=user)
-        
-        if response["ok"]:
-            user_info = response["user"]
-            profile = user_info.get("profile", {})
-            
-            return {
-                "success": True,
-                "user": {
-                    "id": user_info.get("id"),
-                    "name": user_info.get("name"),
-                    "real_name": user_info.get("real_name"),
-                    "display_name": profile.get("display_name"),
-                    "email": profile.get("email"),
-                    "phone": profile.get("phone"),
-                    "title": profile.get("title"),
-                    "status_text": profile.get("status_text"),
-                    "status_emoji": profile.get("status_emoji"),
-                    "is_admin": user_info.get("is_admin"),
-                    "is_bot": user_info.get("is_bot"),
-                    "is_app_user": user_info.get("is_app_user"),
-                    "updated": user_info.get("updated"),
-                    "timezone": user_info.get("tz")
-                }
-            }
-        else:
-            return {
-                "success": False,
-                "error": f"Failed to get user info: {response.get('error', 'Unknown error')}"
-            }
-            
-    except ValueError as e:
-        return {"success": False, "error": str(e)}
-    except SlackApiError as e:
-        return {"success": False, "error": f"Slack API error: {e.response['error']}"}
-    except Exception as e:
-        return {"success": False, "error": f"Unexpected error: {str(e)}"}
 
 @mcp.tool("upload_file")
 def upload_file(
@@ -1587,8 +1536,8 @@ async def list_workspace_members(limit: int = 100) -> str:
     except Exception as e:
         return f"❌ Unexpected Error: {str(e)}"
 
-@mcp.tool("search_users")
-async def search_users(query: str) -> str:
+@mcp.tool("search_slack_users")
+async def search_slack_users(query: str) -> str:
     """
     Search for users in the workspace by name or email.
     

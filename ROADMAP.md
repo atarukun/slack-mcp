@@ -127,7 +127,7 @@
 ### 6.1 User Information ✅
 - [x] Tool: Get user profile
 - [x] Tool: List workspace members
-- [x] Tool: Search users
+- [x] Tool: Search users (renamed to search_slack_users)
 - [x] Tool: Get user presence status
 - [x] Tool: Get user timezone
 

@@ -139,7 +139,7 @@ See [CONFIGURATION_GUIDE.md](CONFIGURATION_GUIDE.md) for detailed setup instruct
 #### **User Management Tools (Phase 6)**
 25. **`get_user_info`** - Get detailed information about a Slack user
 26. **`list_workspace_members`** - List all members in the workspace (with categorization)
-27. **`search_users`** - Search for users by name, email, or title
+27. **`search_slack_users`** - Search for users by name, email, or title
 28. **`get_user_presence`** - Get a user's current presence status (active/away)
 29. **`get_user_timezone`** - Get a user's timezone information
 30. **`get_user_conversations`** - List all conversations a user is member of
