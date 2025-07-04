@@ -101,8 +101,8 @@ See [CONFIGURATION_GUIDE.md](CONFIGURATION_GUIDE.md) for detailed setup instruct
 
 **Version**: 1.2.0 (Phase 5 Release)  
 **Phases Completed**: 5 of 13 (Channel management complete)  
-**Tools Available**: 25 production-ready MCP tools  
-**Testing**: Verified with ILDM workspace  
+**Tools Available**: 24 production-ready MCP tools  
+**Testing**: Verified with ILDM workspace
 
 ### **Available Tools**
 
@@ -128,14 +128,13 @@ See [CONFIGURATION_GUIDE.md](CONFIGURATION_GUIDE.md) for detailed setup instruct
 #### **Channel Management Tools (Phase 5)**
 16. **`create_channel`** - Create new public or private channels
 17. **`archive_channel`** - Archive channels to preserve history
-18. **`unarchive_channel`** - Restore archived channels
-19. **`set_channel_topic`** - Set or update channel topics
-20. **`set_channel_purpose`** - Set channel purposes/descriptions
-21. **`join_channel`** - Join public channels
-22. **`leave_channel`** - Leave channels
-23. **`invite_to_channel`** - Invite users to channels
-24. **`remove_from_channel`** - Remove users from channels
-25. **`list_channel_members`** - List all members of a channel
+18. **`set_channel_topic`** - Set or update channel topics
+19. **`set_channel_purpose`** - Set channel purposes/descriptions
+20. **`join_channel`** - Join public channels
+21. **`leave_channel`** - Leave channels
+22. **`invite_to_channel`** - Invite users to channels
+23. **`remove_from_channel`** - Remove users from channels
+24. **`list_channel_members`** - List all members of a channel
 
 ## 📖 Documentation
 

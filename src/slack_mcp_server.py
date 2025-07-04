@@ -1108,47 +1108,6 @@ async def archive_channel(channel: str) -> str:
     except Exception as e:
         return f"❌ Unexpected Error: {str(e)}"
 
-@mcp.tool("unarchive_channel")
-async def unarchive_channel(channel: str) -> str:
-    """
-    Unarchive a previously archived Slack channel.
-    
-    Args:
-        channel: Channel ID to unarchive
-    
-    Returns:
-        Formatted unarchive result
-    """
-    try:
-        validate_slack_token()
-        
-        # Initialize async client
-        async_client = await init_async_client()
-        if not async_client:
-            return "❌ Failed to initialize async Slack client"
-        
-        # Unarchive channel with rate limiting
-        response = await make_slack_request(
-            async_client.conversations_unarchive,
-            channel=channel
-        )
-        
-        if response:
-            result = "✅ **Channel Unarchived Successfully**\n\n"
-            result += f"• **Channel ID:** {channel}\n"
-            result += f"• **Status:** Active\n"
-            result += "• **Note:** Channel is now available for messages\n"
-            
-            return result
-        else:
-            return "❌ Failed to unarchive channel: API request failed"
-            
-    except ValueError as e:
-        return f"❌ Configuration Error: {str(e)}"
-    except SlackApiError as e:
-        return f"❌ Slack API Error: {e.response['error']}"
-    except Exception as e:
-        return f"❌ Unexpected Error: {str(e)}"
 
 @mcp.tool("set_channel_topic")
 async def set_channel_topic(channel: str, topic: str) -> str:

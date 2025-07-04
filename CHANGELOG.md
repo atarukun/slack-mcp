@@ -11,7 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Phase 5: Channel Management Tools**
   - `create_channel` - Create new public or private channels with descriptions
   - `archive_channel` - Archive channels to preserve history
-  - `unarchive_channel` - Restore previously archived channels
   - `set_channel_topic` - Set or update channel topics
   - `set_channel_purpose` - Set channel purposes/descriptions
   - `join_channel` - Join public channels
@@ -21,9 +20,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `list_channel_members` - List all members of a channel with pagination
 
 ### Changed
-- Updated tool count from 15 to 25 production-ready tools
+- Updated tool count from 15 to 24 production-ready tools
 - Enhanced documentation with Phase 5 tools
 - Improved error handling consistency across all channel operations
+
+### Removed
+- `unarchive_channel` - Not supported with bot tokens due to Slack API limitations
 
 ### Technical
 - All new tools follow async patterns with proper rate limiting

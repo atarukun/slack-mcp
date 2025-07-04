@@ -110,7 +110,8 @@
 - [x] Tool: List all channels (already implemented in Phase 3)
 - [x] Tool: Get channel information (already implemented in Phase 3)
 - [x] Tool: Create new channel
-- [x] Tool: Archive/unarchive channel
+- [x] Tool: Archive channel
+- [ ] ~~Tool: Unarchive channel~~ (Not supported with bot tokens - Slack API limitation)
 - [x] Tool: Set channel topic/purpose
 
 ### 5.2 Channel Membership ✅
