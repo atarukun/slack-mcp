@@ -12,12 +12,11 @@ from slack_sdk import WebClient
 from slack_sdk.web.async_client import AsyncWebClient
 from slack_sdk.errors import SlackApiError
 import httpx
-from pydantic import BaseModel, Field
 import time
 import json
 from datetime import datetime
 
-# Import utilities from the new package structure
+# Import utilities and models from the new package structure
 try:
     # Try absolute import first (when installed as package)
     from slack_mcp.utils import (
@@ -34,6 +33,13 @@ try:
         MIN_API_INTERVAL,
         rate_limit_check,
         make_slack_request,
+    )
+    from slack_mcp.models import (
+        SlackTokenValidation,
+        ChannelInfo,
+        MessageInfo,
+        UserInfo,
+        FileUploadInfo,
     )
 except ImportError:
     # Fall back to relative import (when running directly)
@@ -55,6 +61,13 @@ except ImportError:
         rate_limit_check,
         make_slack_request,
     )
+    from slack_mcp.models import (
+        SlackTokenValidation,
+        ChannelInfo,
+        MessageInfo,
+        UserInfo,
+        FileUploadInfo,
+    )
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -62,31 +75,6 @@ logger = logging.getLogger(__name__)
 
 # Initialize FastMCP server
 mcp = FastMCP("slack", description="A comprehensive MCP server for Slack API operations")
-
-# Pydantic models for request/response validation
-class SlackTokenValidation(BaseModel):
-    token: str = Field(description="Slack bot token (xoxb-*) or user token (xoxp-*)")
-
-class ChannelInfo(BaseModel):
-    channel: str = Field(description="Channel ID or name (e.g., 'C1234567890' or '#general')")
-
-class MessageInfo(BaseModel):
-    channel: str = Field(description="Channel ID or name")
-    text: str = Field(description="Message text to send")
-    thread_ts: Optional[str] = Field(None, description="Timestamp of parent message to reply in thread")
-    blocks: Optional[List[Dict[str, Any]]] = Field(None, description="Slack blocks for rich formatting")
-    attachments: Optional[List[Dict[str, Any]]] = Field(None, description="Message attachments")
-
-class UserInfo(BaseModel):
-    user: str = Field(description="User ID or email address")
-
-class FileUploadInfo(BaseModel):
-    channels: str = Field(description="Comma-separated list of channel IDs or names")
-    content: Optional[str] = Field(None, description="File content as text")
-    filename: Optional[str] = Field(None, description="Name of the file")
-    filetype: Optional[str] = Field(None, description="File type (e.g., 'text', 'json', 'csv')")
-    title: Optional[str] = Field(None, description="Title of the file")
-    initial_comment: Optional[str] = Field(None, description="Initial comment for the file")
 
 
 @mcp.tool("set_slack_token")
