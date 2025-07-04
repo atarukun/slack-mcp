@@ -303,7 +303,7 @@ async def send_message(
         return f"❌ Unexpected Error: {str(e)}"
 
 @mcp.tool("get_channel_info")
-def get_channel_info(channel: str) -> Dict[str, Any]:
+async def get_channel_info(channel: str) -> str:
     """
     Get detailed information about a Slack channel.
     
@@ -316,38 +316,78 @@ def get_channel_info(channel: str) -> Dict[str, Any]:
     try:
         validate_slack_token()
         
-        response = slack_client.conversations_info(channel=channel)
+        # Initialize async client
+        async_client = await init_async_client()
+        if not async_client:
+            return "❌ Failed to initialize async Slack client"
         
-        if response["ok"]:
+        # Get channel info with rate limiting
+        response = await make_slack_request(
+            async_client.conversations_info,
+            channel=channel
+        )
+        
+        if response:
             channel_info = response["channel"]
-            return {
-                "success": True,
-                "channel": {
-                    "id": channel_info.get("id"),
-                    "name": channel_info.get("name"),
-                    "is_channel": channel_info.get("is_channel"),
-                    "is_group": channel_info.get("is_group"),
-                    "is_im": channel_info.get("is_im"),
-                    "is_private": channel_info.get("is_private"),
-                    "is_archived": channel_info.get("is_archived"),
-                    "topic": channel_info.get("topic", {}).get("value"),
-                    "purpose": channel_info.get("purpose", {}).get("value"),
-                    "num_members": channel_info.get("num_members"),
-                    "created": channel_info.get("created")
-                }
-            }
+            
+            # Determine channel type
+            if channel_info.get("is_im"):
+                channel_type = "Direct Message"
+                icon = "💬"
+            elif channel_info.get("is_mpim"):
+                channel_type = "Group Direct Message"
+                icon = "👥"
+            elif channel_info.get("is_private"):
+                channel_type = "Private Channel"
+                icon = "🔒"
+            else:
+                channel_type = "Public Channel"
+                icon = "📢"
+            
+            result = f"{icon} **Channel Information**\n\n"
+            result += f"• **Name:** #{channel_info.get('name', 'N/A')}\n"
+            result += f"• **ID:** {channel_info.get('id', 'N/A')}\n"
+            result += f"• **Type:** {channel_type}\n"
+            
+            if channel_info.get("is_archived"):
+                result += f"• **Status:** 📦 Archived\n"
+            
+            if channel_info.get("num_members") is not None:
+                result += f"• **Members:** {channel_info['num_members']}\n"
+            
+            # Creation date
+            if channel_info.get("created"):
+                created_date = datetime.fromtimestamp(channel_info["created"]).strftime('%Y-%m-%d %H:%M:%S')
+                result += f"• **Created:** {created_date}\n"
+            
+            # Topic
+            topic = channel_info.get("topic", {}).get("value")
+            if topic:
+                result += f"\n• **Topic:** {topic}\n"
+            
+            # Purpose
+            purpose = channel_info.get("purpose", {}).get("value")
+            if purpose:
+                result += f"• **Purpose:** {purpose}\n"
+            
+            # Creator
+            if channel_info.get("creator"):
+                result += f"\n• **Created by:** <@{channel_info['creator']}>\n"
+            
+            # Additional metadata for private channels
+            if channel_info.get("is_private") and channel_info.get("is_member") is not None:
+                result += f"• **You are a member:** {'Yes' if channel_info['is_member'] else 'No'}\n"
+            
+            return result
         else:
-            return {
-                "success": False,
-                "error": f"Failed to get channel info: {response.get('error', 'Unknown error')}"
-            }
+            return "❌ Failed to get channel info: API request failed"
             
     except ValueError as e:
-        return {"success": False, "error": str(e)}
+        return f"❌ Configuration Error: {str(e)}"
     except SlackApiError as e:
-        return {"success": False, "error": f"Slack API error: {e.response['error']}"}
+        return f"❌ Slack API Error: {e.response['error']}"
     except Exception as e:
-        return {"success": False, "error": f"Unexpected error: {str(e)}"}
+        return f"❌ Unexpected Error: {str(e)}"
 
 @mcp.tool("list_channels")
 async def list_channels(types: Optional[str] = "public_channel", limit: int = 100) -> str:
@@ -442,14 +482,14 @@ async def list_channels(types: Optional[str] = "public_channel", limit: int = 10
 
 
 @mcp.tool("upload_file")
-def upload_file(
+async def upload_file(
     channels: str,
     content: Optional[str] = None,
     filename: Optional[str] = None,
     filetype: Optional[str] = None,
     title: Optional[str] = None,
     initial_comment: Optional[str] = None
-) -> Dict[str, Any]:
+) -> str:
     """
     Upload a file to one or more Slack channels.
     
@@ -468,12 +508,16 @@ def upload_file(
         validate_slack_token()
         
         if not content:
-            return {
-                "success": False,
-                "error": "File content is required"
-            }
+            return "❌ File content is required"
         
-        response = slack_client.files_upload_v2(
+        # Initialize async client
+        async_client = await init_async_client()
+        if not async_client:
+            return "❌ Failed to initialize async Slack client"
+        
+        # Use files_upload_v2 with rate limiting
+        response = await make_slack_request(
+            async_client.files_upload_v2,
             content=content,
             filename=filename or "file.txt",
             title=title,
@@ -481,32 +525,60 @@ def upload_file(
             channel=channels
         )
         
-        if response["ok"]:
+        if response:
             file_info = response["file"]
-            return {
-                "success": True,
-                "message": "File uploaded successfully",
-                "file": {
-                    "id": file_info.get("id"),
-                    "name": file_info.get("name"),
-                    "title": file_info.get("title"),
-                    "mimetype": file_info.get("mimetype"),
-                    "size": file_info.get("size"),
-                    "url_private": file_info.get("url_private")
-                }
-            }
+            
+            result = "✅ **File Uploaded Successfully**\n\n"
+            result += f"• **File ID:** {file_info.get('id', 'N/A')}\n"
+            result += f"• **Name:** {file_info.get('name', 'N/A')}\n"
+            
+            if file_info.get('title'):
+                result += f"• **Title:** {file_info['title']}\n"
+            
+            # File size formatting
+            if file_info.get('size'):
+                size = file_info['size']
+                if size < 1024:
+                    size_str = f"{size} bytes"
+                elif size < 1024 * 1024:
+                    size_str = f"{size / 1024:.1f} KB"
+                else:
+                    size_str = f"{size / (1024 * 1024):.1f} MB"
+                result += f"• **Size:** {size_str}\n"
+            
+            if file_info.get('mimetype'):
+                result += f"• **Type:** {file_info['mimetype']}\n"
+            elif filetype:
+                result += f"• **Type:** {filetype}\n"
+            
+            # Channels the file was shared to
+            result += f"\n• **Shared to:** {channels}\n"
+            
+            if initial_comment:
+                result += f"• **Comment:** {initial_comment}\n"
+            
+            # File URLs
+            if file_info.get('url_private'):
+                result += f"\n• **URL:** {file_info['url_private']}\n"
+            
+            if file_info.get('permalink'):
+                result += f"• **Permalink:** {file_info['permalink']}\n"
+            
+            # Upload timestamp
+            if file_info.get('created'):
+                upload_time = datetime.fromtimestamp(file_info['created']).strftime('%Y-%m-%d %H:%M:%S')
+                result += f"\n• **Uploaded at:** {upload_time}\n"
+            
+            return result
         else:
-            return {
-                "success": False,
-                "error": f"Failed to upload file: {response.get('error', 'Unknown error')}"
-            }
+            return "❌ Failed to upload file: API request failed"
             
     except ValueError as e:
-        return {"success": False, "error": str(e)}
+        return f"❌ Configuration Error: {str(e)}"
     except SlackApiError as e:
-        return {"success": False, "error": f"Slack API error: {e.response['error']}"}
+        return f"❌ Slack API Error: {e.response['error']}"
     except Exception as e:
-        return {"success": False, "error": f"Unexpected error: {str(e)}"}
+        return f"❌ Unexpected Error: {str(e)}"
 
 # Phase 4: Extended Messaging Tools
 
