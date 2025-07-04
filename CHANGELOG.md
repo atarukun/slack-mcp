@@ -1,9 +1,35 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+All notable changes to the Slack MCP Server project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.2.0] - 2025-01-04
+
+### Added
+- **Phase 5: Channel Management Tools**
+  - `create_channel` - Create new public or private channels with descriptions
+  - `archive_channel` - Archive channels to preserve history
+  - `unarchive_channel` - Restore previously archived channels
+  - `set_channel_topic` - Set or update channel topics
+  - `set_channel_purpose` - Set channel purposes/descriptions
+  - `join_channel` - Join public channels
+  - `leave_channel` - Leave channels
+  - `invite_to_channel` - Invite multiple users to channels
+  - `remove_from_channel` - Remove users from channels (kick)
+  - `list_channel_members` - List all members of a channel with pagination
+
+### Changed
+- Updated tool count from 15 to 25 production-ready tools
+- Enhanced documentation with Phase 5 tools
+- Improved error handling consistency across all channel operations
+
+### Technical
+- All new tools follow async patterns with proper rate limiting
+- Comprehensive error handling for permission-based operations
+- Support for enterprise grid workspaces (team_id parameter)
+- Rich formatted responses for all channel operations
 
 ## [1.1.0] - 2025-07-03
 
