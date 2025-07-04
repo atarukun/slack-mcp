@@ -101,7 +101,7 @@ See [CONFIGURATION_GUIDE.md](CONFIGURATION_GUIDE.md) for detailed setup instruct
 
 **Version**: 1.3.0 (Phase 6 Release)  
 **Phases Completed**: 6 of 13 (User management complete)  
-**Tools Available**: 33 production-ready MCP tools  
+**Tools Available**: 30 production-ready MCP tools  
 **Testing**: Verified with ILDM workspace
 
 ### **Available Tools**
@@ -143,9 +143,6 @@ See [CONFIGURATION_GUIDE.md](CONFIGURATION_GUIDE.md) for detailed setup instruct
 28. **`get_user_presence`** - Get a user's current presence status (active/away)
 29. **`get_user_timezone`** - Get a user's timezone information
 30. **`get_user_conversations`** - List all conversations a user is member of
-31. **`set_user_status`** - Set custom user status (requires user token)
-32. **`update_user_profile`** - Update user profile fields (requires user token)
-33. **`set_user_presence`** - Set user presence to active/away (requires user token)
 
 ## 📖 Documentation
 
@@ -196,7 +193,8 @@ docker run --rm -i \
 Contributions are welcome! This project follows a structured development roadmap:
 
 - **Phases 1-3**: ✅ Core implementation (COMPLETED)
-- **Phases 4-6**: ✅ Extended messaging, channel & user management (COMPLETED)
+- **Phases 4-5**: ✅ Extended messaging, channel management (COMPLETED)
+- **Phase 6**: User Management with basic tools (Completely moved more advanced user management to Phase 10)
 - **Phases 7-9**: Advanced file operations, search, interactive elements
 - **Phases 10-13**: Analytics, workflows, production features
 

@@ -20,10 +20,7 @@ from slack_mcp_server import (
     search_users,
     get_user_presence,
     get_user_timezone,
-    set_user_status,
-    update_user_profile,
-    get_user_conversations,
-    set_user_presence
+    get_user_conversations
 )
 
 class TestPhase6:
@@ -101,40 +98,6 @@ class TestPhase6:
         else:
             print("❌ No user ID available for testing")
     
-    async def test_user_status_operations(self):
-        """Test user status operations (requires user token)"""
-        print("\n=== Testing User Status Operations ===")
-        print("Note: These operations require a user token (xoxp-), not a bot token")
-        
-        # Test setting status
-        print("--- Testing Set User Status ---")
-        result = await set_user_status(
-            status_text="Testing MCP Server",
-            status_emoji=":computer:",
-            expiration=0
-        )
-        print(result)
-        
-        # Test clearing status
-        await asyncio.sleep(2)
-        print("\n--- Testing Clear User Status ---")
-        result = await set_user_status(
-            status_text="",
-            status_emoji="",
-            expiration=0
-        )
-        print(result)
-    
-    async def test_update_user_profile(self):
-        """Test updating user profile (requires user token)"""
-        print("\n=== Testing Update User Profile ===")
-        print("Note: This operation requires a user token (xoxp-), not a bot token")
-        
-        result = await update_user_profile(
-            title="MCP Test User",
-            display_name="MCP Tester"
-        )
-        print(result)
     
     async def test_get_user_conversations(self):
         """Test getting user conversations"""
@@ -153,21 +116,6 @@ class TestPhase6:
         )
         print(result)
     
-    async def test_set_user_presence(self):
-        """Test setting user presence (requires user token)"""
-        print("\n=== Testing Set User Presence ===")
-        print("Note: This operation requires a user token (xoxp-), not a bot token")
-        
-        # Test setting to away
-        print("--- Setting presence to away ---")
-        result = await set_user_presence("away")
-        print(result)
-        
-        # Test setting back to active
-        await asyncio.sleep(2)
-        print("\n--- Setting presence to active ---")
-        result = await set_user_presence("active")
-        print(result)
     
     async def run_all_tests(self):
         """Run all Phase 6 tests"""
@@ -194,23 +142,9 @@ class TestPhase6:
         await self.test_get_user_conversations()
         await asyncio.sleep(1)
         
-        # Tests that require user tokens
-        print("\n" + "=" * 60)
-        print("USER TOKEN REQUIRED TESTS")
-        print("The following tests require a user token (xoxp-)")
-        print("They will likely fail with a bot token")
-        print("=" * 60)
-        
-        await self.test_user_status_operations()
-        await asyncio.sleep(1)
-        
-        await self.test_update_user_profile()
-        await asyncio.sleep(1)
-        
-        await self.test_set_user_presence()
-        
         print("\n" + "=" * 60)
         print("PHASE 6 TESTING COMPLETE")
+        print("Note: Tools requiring user tokens have been moved to Phase 10.6")
         print("=" * 60)
 
 async def main():

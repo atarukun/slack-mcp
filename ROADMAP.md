@@ -132,10 +132,10 @@
 - [x] Tool: Get user timezone
 
 ### 6.2 User Operations ✅
-- [x] Tool: Set user status
-- [x] Tool: Update user profile
 - [x] Tool: Get user's conversations
-- [x] Tool: Set user presence
+- [ ] ~~Tool: Set user status~~ (Requires user token - Slack API limitation)
+- [ ] ~~Tool: Update user profile~~ (Requires user token - Slack API limitation)
+- [ ] ~~Tool: Set user presence~~ (Requires user token - Slack API limitation)
 
 ## Phase 7: File Operations
 
@@ -206,6 +206,12 @@
 - [ ] Tool: Set channel privacy settings (requires advanced permissions)
 - [ ] Tool: Configure channel notifications (requires app configuration)
 - [ ] Tool: Manage channel permissions (requires admin access)
+
+### 10.6 User Token Required Operations
+- [ ] Tool: Set user status (requires user token xoxp-)
+- [ ] Tool: Update user profile (requires user token xoxp-)
+- [ ] Tool: Set user presence (requires user token xoxp-)
+- [ ] Tool: Unarchive channel (requires user token xoxp-)
 
 ## Phase 11: Docker Container Development & Testing
 
