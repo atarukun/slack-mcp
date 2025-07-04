@@ -70,10 +70,15 @@ See [CONFIGURATION_GUIDE.md](CONFIGURATION_GUIDE.md) for detailed setup instruct
 - Email-based user lookup
 
 ### 📁 **File Operations**
-- **upload_file**: Upload text files to channels with metadata
-- Multi-channel file uploads
-- File titles, comments, and type specification
-- Direct text content upload (no file system required)
+- **upload_file**: Upload files to channels or users with metadata
+- **upload_file_to_user**: Direct file uploads to users via DM
+- **list_files**: Browse workspace files with filtering and pagination
+- **get_file_info**: Detailed file metadata and sharing information
+- **get_file_content**: Download and retrieve text file content
+- **delete_file**: Remove files from the workspace
+- **share_file**: Share existing files to additional channels
+- Support for various file types with MIME type detection
+- File size validation and large file handling
 
 ### 🔌 **Connection & Testing**
 - **test_slack_connection**: Comprehensive connectivity testing
@@ -99,9 +104,9 @@ See [CONFIGURATION_GUIDE.md](CONFIGURATION_GUIDE.md) for detailed setup instruct
 
 ## 📊 Current Status
 
-**Version**: 1.3.0 (Phase 6 Release)  
-**Phases Completed**: 6 of 13 (User management complete)  
-**Tools Available**: 30 production-ready MCP tools  
+**Version**: 1.4.0 (Phase 7 Release)  
+**Phases Completed**: 7 of 13 (File operations complete)  
+**Tools Available**: 36 production-ready MCP tools  
 **Testing**: Verified with ILDM workspace
 
 ### **Available Tools**
@@ -113,36 +118,44 @@ See [CONFIGURATION_GUIDE.md](CONFIGURATION_GUIDE.md) for detailed setup instruct
 4. **`get_channel_info`** - Get detailed channel information  
 5. **`list_channels`** - Explore workspace channels with categorization
 6. **`get_user_info`** - Retrieve comprehensive user profiles
-7. **`upload_file`** - Upload files with metadata and comments
 
 #### **Extended Messaging Tools (Phase 4)**
-8. **`update_message`** - Edit/update existing messages
-9. **`delete_message`** - Delete messages from channels
-10. **`pin_message`** - Pin important messages to channels
-11. **`unpin_message`** - Unpin messages from channels
-12. **`get_message_permalink`** - Generate shareable message links
-13. **`schedule_message`** - Schedule messages for future delivery
-14. **`get_thread_replies`** - Retrieve and display thread conversations
-15. **`send_direct_message`** - Send private messages to users
+7. **`update_message`** - Edit/update existing messages
+8. **`delete_message`** - Delete messages from channels
+9. **`pin_message`** - Pin important messages to channels
+10. **`unpin_message`** - Unpin messages from channels
+11. **`get_message_permalink`** - Generate shareable message links
+12. **`schedule_message`** - Schedule messages for future delivery
+13. **`get_thread_replies`** - Retrieve and display thread conversations
+14. **`send_direct_message`** - Send private messages to users
 
 #### **Channel Management Tools (Phase 5)**
-16. **`create_channel`** - Create new public or private channels
-17. **`archive_channel`** - Archive channels to preserve history
-18. **`set_channel_topic`** - Set or update channel topics
-19. **`set_channel_purpose`** - Set channel purposes/descriptions
-20. **`join_channel`** - Join public channels
-21. **`leave_channel`** - Leave channels
-22. **`invite_to_channel`** - Invite users to channels
-23. **`remove_from_channel`** - Remove users from channels
-24. **`list_channel_members`** - List all members of a channel
+15. **`create_channel`** - Create new public or private channels
+16. **`archive_channel`** - Archive channels to preserve history
+17. **`set_channel_topic`** - Set or update channel topics
+18. **`set_channel_purpose`** - Set channel purposes/descriptions
+19. **`join_channel`** - Join public channels
+20. **`leave_channel`** - Leave channels
+21. **`invite_to_channel`** - Invite users to channels
+22. **`remove_from_channel`** - Remove users from channels
+23. **`list_channel_members`** - List all members of a channel
 
 #### **User Management Tools (Phase 6)**
-25. **`get_user_info`** - Get detailed information about a Slack user
-26. **`list_workspace_members`** - List all members in the workspace (with categorization)
-27. **`search_slack_users`** - Search for users by name, email, or title
-28. **`get_user_presence`** - Get a user's current presence status (active/away)
-29. **`get_user_timezone`** - Get a user's timezone information
-30. **`get_user_conversations`** - List all conversations a user is member of
+24. **`get_user_info`** - Get detailed information about a Slack user
+25. **`list_workspace_members`** - List all members in the workspace (with categorization)
+26. **`search_slack_users`** - Search for users by name, email, or title
+27. **`get_user_presence`** - Get a user's current presence status (active/away)
+28. **`get_user_timezone`** - Get a user's timezone information
+29. **`get_user_conversations`** - List all conversations a user is member of
+
+#### **File Operations Tools (Phase 7)**
+30. **`upload_file`** - Upload files to channels or users with metadata (enhanced)
+31. **`upload_file_to_user`** - Upload files directly to a user via DM
+32. **`list_files`** - List and filter files in the workspace with pagination
+33. **`get_file_info`** - Get detailed information about a specific file
+34. **`get_file_content`** - Download and retrieve text file content
+35. **`delete_file`** - Delete files from the workspace
+36. **`share_file`** - Share existing files to additional channels
 
 ## 📖 Documentation
 
