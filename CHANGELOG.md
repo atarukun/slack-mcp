@@ -5,6 +5,32 @@ All notable changes to the Slack MCP Server will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2025-07-04
+
+### Added
+- **Phase 7: File Operations Tools** (7 tools, including 1 enhanced)
+  - Enhanced `upload_file` - Now supports uploading to users as well as channels
+  - `upload_file_to_user` - Upload files directly to a user via DM
+  - `list_files` - List and filter files in the workspace with pagination
+  - `get_file_info` - Get detailed information about a specific file
+  - `get_file_content` - Download and retrieve text file content
+  - `delete_file` - Delete files from the workspace
+  - `share_file` - Share existing files to additional channels
+
+### Changed
+- Enhanced `upload_file` tool to support user uploads in addition to channels
+- Tool count increased from 30 to 36 production-ready tools
+- Improved file type detection with MIME type support
+- Added file size validation and handling for large files
+
+### Technical Improvements
+- Added pagination support for file listings
+- Implemented file content download with size limits
+- Enhanced file sharing capabilities with comment support
+- Added comprehensive file metadata retrieval
+- Improved error handling for file operations
+- Support for various text file types (json, xml, yaml, python, etc.)
+
 ## [1.3.0] - 2024-01-04
 
 ### Added
