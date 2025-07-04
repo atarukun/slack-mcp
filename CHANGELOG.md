@@ -1,9 +1,36 @@
 # Changelog
 
-All notable changes to the Slack MCP Server project will be documented in this file.
+All notable changes to the Slack MCP Server will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.3.0] - 2024-01-04
+
+### Added
+- **Phase 6: User Management Tools** (6 new tools)
+  - `get_user_info` - Get detailed information about a Slack user
+  - `list_workspace_members` - List all members in the workspace with categorization
+  - `search_slack_users` - Search for users by name, email, or title
+  - `get_user_presence` - Get a user's current presence status
+  - `get_user_timezone` - Get a user's timezone information
+  - `get_user_conversations` - List all conversations a user is member of
+  - Note: Tools requiring user tokens have been moved to Phase 10.6
+
+### Changed
+- Updated ROADMAP to move deferred channel settings from Phase 5.3 to Phase 10.5
+- Tool count increased from 24 to 30 production-ready tools
+- Moved user token required operations to Phase 10.6 in ROADMAP
+
+### Fixed
+- Fixed `get_user_info` returning JSON instead of formatted text (issue #8)
+- Renamed `search_users` to `search_slack_users` to avoid naming conflicts (issue #8)
+
+### Technical Improvements
+- Added user categorization (admins, regular users, bots) in listing tools
+- Enhanced search functionality with multiple field matching
+- Added proper timezone calculations and display
+- Improved error messages for token type requirements
 
 ## [1.2.0] - 2025-01-04
 

@@ -121,25 +121,21 @@
 - [x] Tool: Remove users from channel
 - [x] Tool: List channel members
 
-### 5.3 Channel Settings ⚠️ (Deferred to Phase 10)
-- [ ] Tool: Set channel privacy settings (requires advanced permissions)
-- [ ] Tool: Configure channel notifications (requires app configuration)
-- [ ] Tool: Manage channel permissions (requires admin access)
 
-## Phase 6: User Management Tools
+## Phase 6: User Management Tools ✅ **COMPLETED**
 
-### 6.1 User Information
-- [ ] Tool: Get user profile
-- [ ] Tool: List workspace members
-- [ ] Tool: Search users
-- [ ] Tool: Get user presence status
-- [ ] Tool: Get user timezone
+### 6.1 User Information ✅
+- [x] Tool: Get user profile
+- [x] Tool: List workspace members
+- [x] Tool: Search users (renamed to search_slack_users)
+- [x] Tool: Get user presence status
+- [x] Tool: Get user timezone
 
-### 6.2 User Operations
-- [ ] Tool: Set user status
-- [ ] Tool: Update user profile
-- [ ] Tool: Get user's conversations
-- [ ] Tool: Set user presence
+### 6.2 User Operations ✅
+- [x] Tool: Get user's conversations
+- [ ] ~~Tool: Set user status~~ (Requires user token - Slack API limitation)
+- [ ] ~~Tool: Update user profile~~ (Requires user token - Slack API limitation)
+- [ ] ~~Tool: Set user presence~~ (Requires user token - Slack API limitation)
 
 ## Phase 7: File Operations
 
@@ -205,6 +201,17 @@
 - [ ] Set up event subscriptions
 - [ ] Handle real-time events
 - [ ] Webhook validation
+
+### 10.5 Channel Settings (Advanced)
+- [ ] Tool: Set channel privacy settings (requires advanced permissions)
+- [ ] Tool: Configure channel notifications (requires app configuration)
+- [ ] Tool: Manage channel permissions (requires admin access)
+
+### 10.6 User Token Required Operations
+- [ ] Tool: Set user status (requires user token xoxp-)
+- [ ] Tool: Update user profile (requires user token xoxp-)
+- [ ] Tool: Set user presence (requires user token xoxp-)
+- [ ] Tool: Unarchive channel (requires user token xoxp-)
 
 ## Phase 11: Docker Container Development & Testing
 
