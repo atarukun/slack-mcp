@@ -46,6 +46,26 @@ slack_mcp/
 - Maintained all original functionality without breaking changes
 - Added proper __all__ exports in __init__.py files
 
+## Stage 2: Extract Pydantic Models (Completed)
+
+### What was done:
+1. Created `models/schemas.py` with all Pydantic models:
+   - **SlackTokenValidation**: Token validation model
+   - **ChannelInfo**: Channel information request model
+   - **MessageInfo**: Message sending request model
+   - **UserInfo**: User information request model  
+   - **FileUploadInfo**: File upload request model
+
+2. Updated `models/__init__.py` to export all models
+3. Removed model definitions from `slack_mcp_server.py`
+4. Updated imports to use models from the new location
+
+### Verification:
+- All models maintain their exact definitions
+- Field descriptions preserved for MCP tool generation
+- Pydantic validation still working correctly
+- No functional changes to tool behavior
+
 ## Next Steps
 
 ### Stage 2: Extract Pydantic Models
