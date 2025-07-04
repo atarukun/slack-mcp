@@ -17,23 +17,51 @@ import time
 import json
 from datetime import datetime
 
+# Import utilities from the new package structure
+try:
+    # Try absolute import first (when installed as package)
+    from slack_mcp.utils import (
+        # Client utilities
+        MCP_USER_AGENT,
+        validate_slack_token,
+        init_async_client,
+        get_slack_client,
+        set_slack_client,
+        get_async_slack_client,
+        # Formatting utilities
+        format_file_info,
+        # Error handling utilities
+        MIN_API_INTERVAL,
+        rate_limit_check,
+        make_slack_request,
+    )
+except ImportError:
+    # Fall back to relative import (when running directly)
+    import sys
+    from pathlib import Path
+    sys.path.insert(0, str(Path(__file__).parent))
+    from slack_mcp.utils import (
+        # Client utilities
+        MCP_USER_AGENT,
+        validate_slack_token,
+        init_async_client,
+        get_slack_client,
+        set_slack_client,
+        get_async_slack_client,
+        # Formatting utilities
+        format_file_info,
+        # Error handling utilities
+        MIN_API_INTERVAL,
+        rate_limit_check,
+        make_slack_request,
+    )
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Initialize FastMCP server
 mcp = FastMCP("slack", description="A comprehensive MCP server for Slack API operations")
-
-# Global variables for Slack clients
-slack_client: Optional[WebClient] = None
-async_slack_client: Optional[AsyncWebClient] = None
-
-# Rate limiting tracking
-last_api_call_time = 0.0
-MIN_API_INTERVAL = 1.0  # Minimum seconds between API calls
-
-# MCP User-Agent for API identification
-MCP_USER_AGENT = "Slack-MCP-Server/1.0 (FastMCP)"
 
 # Pydantic models for request/response validation
 class SlackTokenValidation(BaseModel):
@@ -60,75 +88,6 @@ class FileUploadInfo(BaseModel):
     title: Optional[str] = Field(None, description="Title of the file")
     initial_comment: Optional[str] = Field(None, description="Initial comment for the file")
 
-def validate_slack_token() -> bool:
-    """Validate that Slack client is properly initialized with a token."""
-    global slack_client
-    
-    if slack_client is None:
-        slack_token = os.getenv('SLACK_BOT_TOKEN')
-        if not slack_token:
-            raise ValueError(
-                "No Slack token found. Please set SLACK_BOT_TOKEN environment variable "
-                "or use the set_slack_token tool first."
-            )
-        slack_client = WebClient(token=slack_token, user_agent_prefix=MCP_USER_AGENT)
-    
-    return True
-
-async def init_async_client(token: str = None) -> Optional[AsyncWebClient]:
-    """Initialize async Slack client with proper configuration."""
-    global async_slack_client
-    
-    if token:
-        async_slack_client = AsyncWebClient(
-            token=token,
-            user_agent_prefix=MCP_USER_AGENT
-        )
-    elif not async_slack_client:
-        slack_token = os.getenv('SLACK_BOT_TOKEN')
-        if slack_token:
-            async_slack_client = AsyncWebClient(
-                token=slack_token,
-                user_agent_prefix=MCP_USER_AGENT
-            )
-    
-    return async_slack_client
-
-async def rate_limit_check() -> None:
-    """Implement rate limiting compliance with async delays."""
-    global last_api_call_time
-    
-    current_time = time.time()
-    time_since_last_call = current_time - last_api_call_time
-    
-    if time_since_last_call < MIN_API_INTERVAL:
-        sleep_time = MIN_API_INTERVAL - time_since_last_call
-        logger.debug(f"Rate limiting: sleeping for {sleep_time:.2f} seconds")
-        await asyncio.sleep(sleep_time)
-    
-    last_api_call_time = time.time()
-
-async def make_slack_request(client_method, **kwargs) -> Optional[Dict[str, Any]]:
-    """Helper function for API requests with error handling and rate limiting."""
-    try:
-        # Apply rate limiting
-        await rate_limit_check()
-        
-        # Make the API request
-        response = await client_method(**kwargs)
-        
-        if response.get("ok"):
-            return response
-        else:
-            logger.error(f"Slack API error: {response.get('error', 'Unknown error')}")
-            return None
-            
-    except SlackApiError as e:
-        logger.error(f"Slack API error: {e.response['error']}")
-        return None
-    except Exception as e:
-        logger.error(f"Unexpected error in API request: {str(e)}")
-        return None
 
 @mcp.tool("set_slack_token")
 def set_slack_token(token: str) -> Dict[str, Any]:
@@ -142,8 +101,6 @@ def set_slack_token(token: str) -> Dict[str, Any]:
     Returns:
         Success message and basic token validation info
     """
-    global slack_client
-    
     try:
         # Validate token format
         if not token.startswith(('xoxb-', 'xoxp-', 'xoxo-', 'xapp-')):
@@ -153,11 +110,11 @@ def set_slack_token(token: str) -> Dict[str, Any]:
             }
         
         # Initialize client and test connection
-        test_client = WebClient(token=token)
+        test_client = WebClient(token=token, user_agent_prefix=MCP_USER_AGENT)
         auth_response = test_client.auth_test()
         
         if auth_response["ok"]:
-            slack_client = test_client
+            set_slack_client(test_client)
             return {
                 "success": True,
                 "message": "Slack token set successfully",
@@ -894,34 +851,6 @@ async def list_files(
     except Exception as e:
         return f"❌ Unexpected Error: {str(e)}"
 
-def format_file_info(file: Dict[str, Any], index: int) -> str:
-    """Helper function to format file information."""
-    result = f"{index}. **{file.get('name', 'Unnamed')}**\n"
-    result += f"   • ID: {file.get('id', 'N/A')}\n"
-    
-    # File size
-    if file.get('size'):
-        size = file['size']
-        if size < 1024:
-            size_str = f"{size} bytes"
-        elif size < 1024 * 1024:
-            size_str = f"{size / 1024:.1f} KB"
-        else:
-            size_str = f"{size / (1024 * 1024):.1f} MB"
-        result += f"   • Size: {size_str}\n"
-    
-    # Upload info
-    if file.get('user'):
-        result += f"   • Uploaded by: <@{file['user']}>\n"
-    if file.get('created'):
-        upload_time = datetime.fromtimestamp(file['created']).strftime('%Y-%m-%d %H:%M')
-        result += f"   • Uploaded: {upload_time}\n"
-    
-    # Channels shared to
-    if file.get('channels'):
-        result += f"   • Shared in: {len(file['channels'])} channel(s)\n"
-    
-    return result
 
 @mcp.tool("get_file_info")
 async def get_file_info(file_id: str) -> str:
