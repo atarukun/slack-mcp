@@ -122,20 +122,20 @@
 - [x] Tool: List channel members
 
 
-## Phase 6: User Management Tools
+## Phase 6: User Management Tools ✅ **COMPLETED**
 
-### 6.1 User Information
-- [ ] Tool: Get user profile
-- [ ] Tool: List workspace members
-- [ ] Tool: Search users
-- [ ] Tool: Get user presence status
-- [ ] Tool: Get user timezone
+### 6.1 User Information ✅
+- [x] Tool: Get user profile
+- [x] Tool: List workspace members
+- [x] Tool: Search users
+- [x] Tool: Get user presence status
+- [x] Tool: Get user timezone
 
-### 6.2 User Operations
-- [ ] Tool: Set user status
-- [ ] Tool: Update user profile
-- [ ] Tool: Get user's conversations
-- [ ] Tool: Set user presence
+### 6.2 User Operations ✅
+- [x] Tool: Set user status
+- [x] Tool: Update user profile
+- [x] Tool: Get user's conversations
+- [x] Tool: Set user presence
 
 ## Phase 7: File Operations
 

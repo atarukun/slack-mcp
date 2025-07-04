@@ -99,9 +99,9 @@ See [CONFIGURATION_GUIDE.md](CONFIGURATION_GUIDE.md) for detailed setup instruct
 
 ## 📊 Current Status
 
-**Version**: 1.2.0 (Phase 5 Release)  
-**Phases Completed**: 5 of 13 (Channel management complete)  
-**Tools Available**: 24 production-ready MCP tools  
+**Version**: 1.3.0 (Phase 6 Release)  
+**Phases Completed**: 6 of 13 (User management complete)  
+**Tools Available**: 33 production-ready MCP tools  
 **Testing**: Verified with ILDM workspace
 
 ### **Available Tools**
@@ -135,6 +135,17 @@ See [CONFIGURATION_GUIDE.md](CONFIGURATION_GUIDE.md) for detailed setup instruct
 22. **`invite_to_channel`** - Invite users to channels
 23. **`remove_from_channel`** - Remove users from channels
 24. **`list_channel_members`** - List all members of a channel
+
+#### **User Management Tools (Phase 6)**
+25. **`get_user_info`** - Get detailed information about a Slack user
+26. **`list_workspace_members`** - List all members in the workspace (with categorization)
+27. **`search_users`** - Search for users by name, email, or title
+28. **`get_user_presence`** - Get a user's current presence status (active/away)
+29. **`get_user_timezone`** - Get a user's timezone information
+30. **`get_user_conversations`** - List all conversations a user is member of
+31. **`set_user_status`** - Set custom user status (requires user token)
+32. **`update_user_profile`** - Update user profile fields (requires user token)
+33. **`set_user_presence`** - Set user presence to active/away (requires user token)
 
 ## 📖 Documentation
 
@@ -184,7 +195,8 @@ docker run --rm -i \
 
 Contributions are welcome! This project follows a structured development roadmap:
 
-- **Phases 4-6**: Extended messaging, channel management, user operations
+- **Phases 1-3**: ✅ Core implementation (COMPLETED)
+- **Phases 4-6**: ✅ Extended messaging, channel & user management (COMPLETED)
 - **Phases 7-9**: Advanced file operations, search, interactive elements
 - **Phases 10-13**: Analytics, workflows, production features
 
