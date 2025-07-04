@@ -121,10 +121,6 @@
 - [x] Tool: Remove users from channel
 - [x] Tool: List channel members
 
-### 5.3 Channel Settings ⚠️ (Deferred to Phase 10)
-- [ ] Tool: Set channel privacy settings (requires advanced permissions)
-- [ ] Tool: Configure channel notifications (requires app configuration)
-- [ ] Tool: Manage channel permissions (requires admin access)
 
 ## Phase 6: User Management Tools
 
@@ -205,6 +201,11 @@
 - [ ] Set up event subscriptions
 - [ ] Handle real-time events
 - [ ] Webhook validation
+
+### 10.5 Channel Settings (Advanced)
+- [ ] Tool: Set channel privacy settings (requires advanced permissions)
+- [ ] Tool: Configure channel notifications (requires app configuration)
+- [ ] Tool: Manage channel permissions (requires admin access)
 
 ## Phase 11: Docker Container Development & Testing
 
