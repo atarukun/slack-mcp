@@ -266,19 +266,21 @@ async def get_file_content(
         if not download_url:
             return "❌ No download URL available for this file"
         
-        # Download the file content using httpx
-        import httpx
+        # Download the file content using aiohttp
+        import aiohttp
         headers = {
             "Authorization": f"Bearer {os.getenv('SLACK_BOT_TOKEN')}",
             "User-Agent": MCP_USER_AGENT
         }
         
-        async with httpx.AsyncClient() as client:
+        # Configure timeout settings
+        timeout = aiohttp.ClientTimeout(total=30, connect=10)
+        
+        async with aiohttp.ClientSession(timeout=timeout) as session:
             try:
-                response = await client.get(download_url, headers=headers)
-                response.raise_for_status()
-                
-                content = response.text
+                async with session.get(download_url, headers=headers) as response:
+                    response.raise_for_status()
+                    content = await response.text()
                 
                 # Format the response
                 result = f"📄 **File Content**\n\n"
@@ -298,8 +300,24 @@ async def get_file_content(
                 
                 return result
                 
-            except httpx.HTTPError as e:
-                return f"❌ Failed to download file: {str(e)}"
+            except aiohttp.ClientConnectorError as e:
+                logger.error(f"ClientConnectorError in get_file_content: {str(e)}")
+                return f"❌ Connection error: Unable to connect to Slack file server. {str(e)}"
+            except aiohttp.ServerTimeoutError as e:
+                logger.error(f"ServerTimeoutError in get_file_content: {str(e)}")
+                return f"❌ Server timeout: The file download took too long. Try again with a smaller file."
+            except aiohttp.ClientResponseError as e:
+                logger.error(f"ClientResponseError in get_file_content: {e.status} - {e.message}")
+                return f"❌ HTTP Error {e.status}: {e.message}"
+            except aiohttp.ClientError as e:
+                # More specific error details
+                error_type = type(e).__name__
+                error_msg = str(e)
+                logger.error(f"ClientError in get_file_content ({error_type}): {error_msg}")
+                return f"❌ Failed to download file ({error_type}): {error_msg}"
+            except Exception as e:
+                logger.error(f"Unexpected error in get_file_content: {type(e).__name__} - {str(e)}", exc_info=True)
+                return f"❌ Unexpected download error: {type(e).__name__} - {str(e)}"
                 
     except ValueError as e:
         return f"❌ Configuration Error: {str(e)}"
@@ -498,45 +516,49 @@ async def share_file(
         
         file_info = info_response.get('file', {})
         file_name = file_info.get('name', 'Unknown')
+        file_permalink = file_info.get('permalink', '')
         
-        # Share file public URL
-        share_response = await make_slack_request(
-            async_client.files_sharedPublicURL,
-            file=file_id
-        )
-
-        if not share_response:
-            return "❌ Failed to obtain a public URL for file"
-
-        public_url = share_response.get('file', {}).get('permalink_public', '')
-
         channel_list = [ch.strip() for ch in channels.split(',')]
         shared_to = []
         failed = []
         
+        # Check current shares
+        current_channels = set(file_info.get('channels', []))
+        current_groups = set(file_info.get('groups', []))
+        
         for channel in channel_list:
             try:
-                # Send a message with the file public URL
+                # Check if already shared
+                if channel in current_channels or channel in current_groups:
+                    shared_to.append(f"{channel} (already shared)")
+                    continue
+                
+                # Send a message with the file link
                 msg_params = {
                     "channel": channel,
-                    "text": comment or f"Shared file: {file_name}",
-                    "blocks": [
+                    "text": comment or f"Shared file: {file_name}\n{file_permalink}",
+                    "unfurl_links": True,
+                    "unfurl_media": True
+                }
+                
+                # If we have blocks, use them
+                if comment:
+                    msg_params["blocks"] = [
                         {
                             "type": "section",
                             "text": {
                                 "type": "mrkdwn",
-                                "text": comment or f"Shared file: *{file_name}*"
+                                "text": comment
                             }
                         },
                         {
                             "type": "section",
                             "text": {
                                 "type": "mrkdwn",
-                                "text": f"<{public_url}|View File>"
+                                "text": f"📎 *File:* <{file_permalink}|{file_name}>"
                             }
                         }
                     ]
-                }
                 
                 response = await make_slack_request(
                     async_client.chat_postMessage,
@@ -546,11 +568,20 @@ async def share_file(
                 if response:
                     shared_to.append(channel)
                 else:
-                    failed.append(channel)
+                    failed.append(f"{channel} (no response)")
                     
+            except SlackApiError as e:
+                error_msg = e.response.get('error', 'Unknown error')
+                if error_msg == 'channel_not_found':
+                    failed.append(f"{channel} (channel not found - check if bot is member)")
+                elif error_msg == 'not_in_channel':
+                    failed.append(f"{channel} (bot not in channel)")
+                else:
+                    failed.append(f"{channel} ({error_msg})")
+                logger.error(f"Slack API error sharing to {channel}: {error_msg}")
             except Exception as e:
                 logger.error(f"Failed to share to {channel}: {str(e)}")
-                failed.append(channel)
+                failed.append(f"{channel} (error: {str(e)})")
         
         # Format result
         result = f"📤 **File Sharing Results**\n\n"
