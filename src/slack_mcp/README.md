@@ -66,13 +66,35 @@ slack_mcp/
 - Pydantic validation still working correctly
 - No functional changes to tool behavior
 
+## Stage 3: Extract Core Tools (Completed)
+
+### What was done:
+1. Created `tools/core.py` with core tools from phases 1-3:
+   - **set_slack_token**: Authentication setup
+   - **test_slack_connection**: Connection testing
+   - **send_message**: Basic messaging
+   - **get_channel_info**: Channel information retrieval
+   - **list_channels**: Channel listing
+   - **get_user_info**: User information retrieval
+   - **upload_file**: Basic file upload
+
+2. Updated `tools/__init__.py` to import core module
+3. Removed ~393 lines from main server file
+4. Fixed circular import issues
+
+### Key Design Decisions:
+- Tools import mcp instance from slack_mcp_server
+- Import structure avoids circular dependencies
+- All tool signatures and docstrings preserved
+- Tools auto-register via decorators
+
 ## Next Steps
 
-### Stage 2: Extract Pydantic Models
-Move all Pydantic model definitions to `models/` subdirectory
-
-### Stage 3-7: Extract Tool Groups
-Organize tools by functionality into separate modules under `tools/`
+### Stage 4-7: Extract Remaining Tool Groups
+- Stage 4: Extract Channel & User Management Tools
+- Stage 5: Extract Threading Tools
+- Stage 6: Extract Message Management Tools
+- Stage 7: Extract File Operations Tools
 
 ### Stage 8-10: Testing and Documentation
 Add comprehensive tests and update documentation
