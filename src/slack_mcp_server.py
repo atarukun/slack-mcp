@@ -79,15 +79,18 @@ mcp = FastMCP("slack", description="A comprehensive MCP server for Slack API ope
 # Import and register tools
 try:
     from slack_mcp.tools import core as tools_core
+    from slack_mcp.tools import message_management as tools_message_mgmt
 except ImportError:
     # Fallback for direct execution
     import sys
     from pathlib import Path
     sys.path.insert(0, str(Path(__file__).parent))
     from slack_mcp.tools import core as tools_core
+    from slack_mcp.tools import message_management as tools_message_mgmt
 
-# Register tools from the tools module
+# Register tools from the tools modules
 tools_core.register_tools(mcp)
+tools_message_mgmt.register_tools(mcp)
 
 # Phase 7: File Operations (Enhanced)
 
@@ -609,367 +612,97 @@ async def share_file(
     except Exception as e:
         return f"❌ Unexpected Error: {str(e)}"
 
-# Phase 4: Extended Messaging Tools
-
-@mcp.tool("update_message")
-async def update_message(
-    channel: str,
-    ts: str,
-    text: str,
-    blocks: Optional[List[Dict[str, Any]]] = None,
-    attachments: Optional[List[Dict[str, Any]]] = None
+@mcp.tool("upload_file")
+async def upload_file(
+    channels: str,
+    content: Optional[str] = None,
+    filename: Optional[str] = None,
+    filetype: Optional[str] = None,
+    title: Optional[str] = None,
+    initial_comment: Optional[str] = None
 ) -> str:
     """
-    Update/edit an existing message in Slack.
+    Upload a file to one or more Slack channels or users.
     
     Args:
-        channel: Channel ID where the message is located
-        ts: Timestamp of the message to update
-        text: New message text
-        blocks: Optional new Slack blocks for rich formatting
-        attachments: Optional new message attachments
+        channels: Comma-separated list of channel IDs, channel names, or user IDs
+        content: File content as text (for text files)
+        filename: Name of the file
+        filetype: File type (e.g., 'text', 'json', 'csv', 'python', 'javascript')
+        title: Title of the file
+        initial_comment: Initial comment for the file
     
     Returns:
-        Formatted update result
+        File upload result with file ID and sharing info
     """
     try:
         validate_slack_token()
+        
+        if not content:
+            return "❌ File content is required"
         
         # Initialize async client
         async_client = await init_async_client()
         if not async_client:
             return "❌ Failed to initialize async Slack client"
         
-        # Update message with rate limiting
+        # Use files_upload_v2 with rate limiting
         response = await make_slack_request(
-            async_client.chat_update,
-            channel=channel,
-            ts=ts,
-            text=text,
-            blocks=blocks,
-            attachments=attachments
+            async_client.files_upload_v2,
+            content=content,
+            filename=filename or "file.txt",
+            title=title,
+            initial_comment=initial_comment,
+            channel=channels
         )
         
         if response:
-            result = "✅ **Message Updated Successfully**\n\n"
-            result += f"• **Channel:** {response.get('channel', 'N/A')}\n"
-            result += f"• **Timestamp:** {response.get('ts', 'N/A')}\n"
-            result += f"• **New Text:** {text[:100]}{'...' if len(text) > 100 else ''}\n"
+            file_info = response["file"]
             
-            if blocks:
-                result += f"• **Rich Formatting:** {len(blocks)} block(s)\n"
-                
-            return result
-        else:
-            return "❌ Failed to update message: API request failed"
+            result = "✅ **File Uploaded Successfully**\n\n"
+            result += f"• **File ID:** {file_info.get('id', 'N/A')}\n"
+            result += f"• **Name:** {file_info.get('name', 'N/A')}\n"
             
-    except ValueError as e:
-        return f"❌ Configuration Error: {str(e)}"
-    except SlackApiError as e:
-        return f"❌ Slack API Error: {e.response['error']}"
-    except Exception as e:
-        return f"❌ Unexpected Error: {str(e)}"
-
-@mcp.tool("delete_message")
-async def delete_message(channel: str, ts: str) -> str:
-    """
-    Delete a message from Slack.
-    
-    Args:
-        channel: Channel ID where the message is located
-        ts: Timestamp of the message to delete
-    
-    Returns:
-        Formatted deletion result
-    """
-    try:
-        validate_slack_token()
-        
-        # Initialize async client
-        async_client = await init_async_client()
-        if not async_client:
-            return "❌ Failed to initialize async Slack client"
-        
-        # Delete message with rate limiting
-        response = await make_slack_request(
-            async_client.chat_delete,
-            channel=channel,
-            ts=ts
-        )
-        
-        if response:
-            result = "✅ **Message Deleted Successfully**\n\n"
-            result += f"• **Channel:** {response.get('channel', 'N/A')}\n"
-            result += f"• **Timestamp:** {response.get('ts', 'N/A')}\n"
+            if file_info.get('title'):
+                result += f"• **Title:** {file_info['title']}\n"
             
-            return result
-        else:
-            return "❌ Failed to delete message: API request failed"
-            
-    except ValueError as e:
-        return f"❌ Configuration Error: {str(e)}"
-    except SlackApiError as e:
-        return f"❌ Slack API Error: {e.response['error']}"
-    except Exception as e:
-        return f"❌ Unexpected Error: {str(e)}"
-
-@mcp.tool("pin_message")
-async def pin_message(channel: str, timestamp: str) -> str:
-    """
-    Pin a message to a Slack channel.
-    
-    Args:
-        channel: Channel ID where the message is located
-        timestamp: Timestamp of the message to pin
-    
-    Returns:
-        Formatted pin result
-    """
-    try:
-        validate_slack_token()
-        
-        # Initialize async client
-        async_client = await init_async_client()
-        if not async_client:
-            return "❌ Failed to initialize async Slack client"
-        
-        # Pin message with rate limiting
-        response = await make_slack_request(
-            async_client.pins_add,
-            channel=channel,
-            timestamp=timestamp
-        )
-        
-        if response:
-            result = "✅ **Message Pinned Successfully**\n\n"
-            result += f"• **Channel:** {channel}\n"
-            result += f"• **Message Timestamp:** {timestamp}\n"
-            
-            return result
-        else:
-            return "❌ Failed to pin message: API request failed"
-            
-    except ValueError as e:
-        return f"❌ Configuration Error: {str(e)}"
-    except SlackApiError as e:
-        return f"❌ Slack API Error: {e.response['error']}"
-    except Exception as e:
-        return f"❌ Unexpected Error: {str(e)}"
-
-@mcp.tool("unpin_message")
-async def unpin_message(channel: str, timestamp: str) -> str:
-    """
-    Unpin a message from a Slack channel.
-    
-    Args:
-        channel: Channel ID where the message is located
-        timestamp: Timestamp of the message to unpin
-    
-    Returns:
-        Formatted unpin result
-    """
-    try:
-        validate_slack_token()
-        
-        # Initialize async client
-        async_client = await init_async_client()
-        if not async_client:
-            return "❌ Failed to initialize async Slack client"
-        
-        # Unpin message with rate limiting
-        response = await make_slack_request(
-            async_client.pins_remove,
-            channel=channel,
-            timestamp=timestamp
-        )
-        
-        if response:
-            result = "✅ **Message Unpinned Successfully**\n\n"
-            result += f"• **Channel:** {channel}\n"
-            result += f"• **Message Timestamp:** {timestamp}\n"
-            
-            return result
-        else:
-            return "❌ Failed to unpin message: API request failed"
-            
-    except ValueError as e:
-        return f"❌ Configuration Error: {str(e)}"
-    except SlackApiError as e:
-        return f"❌ Slack API Error: {e.response['error']}"
-    except Exception as e:
-        return f"❌ Unexpected Error: {str(e)}"
-
-@mcp.tool("get_message_permalink")
-async def get_message_permalink(channel: str, message_ts: str) -> str:
-    """
-    Get a permalink URL for a specific message.
-    
-    Args:
-        channel: Channel ID where the message is located
-        message_ts: Timestamp of the message
-    
-    Returns:
-        Formatted permalink information
-    """
-    try:
-        validate_slack_token()
-        
-        # Initialize async client
-        async_client = await init_async_client()
-        if not async_client:
-            return "❌ Failed to initialize async Slack client"
-        
-        # Get permalink with rate limiting
-        response = await make_slack_request(
-            async_client.chat_getPermalink,
-            channel=channel,
-            message_ts=message_ts
-        )
-        
-        if response:
-            result = "✅ **Permalink Generated Successfully**\n\n"
-            result += f"• **Channel:** {channel}\n"
-            result += f"• **Message Timestamp:** {message_ts}\n"
-            result += f"• **Permalink:** {response.get('permalink', 'N/A')}\n"
-            
-            return result
-        else:
-            return "❌ Failed to get permalink: API request failed"
-            
-    except ValueError as e:
-        return f"❌ Configuration Error: {str(e)}"
-    except SlackApiError as e:
-        return f"❌ Slack API Error: {e.response['error']}"
-    except Exception as e:
-        return f"❌ Unexpected Error: {str(e)}"
-
-@mcp.tool("schedule_message")
-async def schedule_message(
-    channel: str,
-    text: str,
-    post_at: int,
-    blocks: Optional[List[Dict[str, Any]]] = None,
-    attachments: Optional[List[Dict[str, Any]]] = None
-) -> str:
-    """
-    Schedule a message to be sent at a specific time.
-    
-    Args:
-        channel: Channel ID or name to send the message to
-        text: Message text to send
-        post_at: Unix timestamp when the message should be sent
-        blocks: Optional Slack blocks for rich formatting
-        attachments: Optional message attachments
-    
-    Returns:
-        Formatted scheduling result
-    """
-    try:
-        validate_slack_token()
-        
-        # Initialize async client
-        async_client = await init_async_client()
-        if not async_client:
-            return "❌ Failed to initialize async Slack client"
-        
-        # Apply rate limiting first
-        await rate_limit_check()
-        
-        # Make direct API call with enhanced error handling
-        try:
-            response = await async_client.chat_scheduleMessage(
-                channel=channel,
-                text=text,
-                post_at=post_at,
-                blocks=blocks,
-                attachments=attachments
-            )
-            
-            if response.get("ok"):
-                scheduled_time = datetime.fromtimestamp(post_at).strftime('%Y-%m-%d %H:%M:%S UTC')
-                
-                result = "✅ **Message Scheduled Successfully**\n\n"
-                result += f"• **Channel:** {response.get('channel', 'N/A')}\n"
-                result += f"• **Scheduled Message ID:** {response.get('scheduled_message_id', 'N/A')}\n"
-                result += f"• **Post Time:** {scheduled_time}\n"
-                result += f"• **Message:** {text[:100]}{'...' if len(text) > 100 else ''}\n"
-                
-                if blocks:
-                    result += f"• **Rich Formatting:** {len(blocks)} block(s)\n"
-                    
-                return result
-            else:
-                error_msg = response.get('error', 'Unknown error')
-                return f"❌ Failed to schedule message: {error_msg}\n\nFull response: {response}"
-                
-        except SlackApiError as api_error:
-            error_detail = api_error.response.get('error', 'Unknown API error')
-            return f"❌ Slack API Error in scheduling: {error_detail}\n\nDetails: {api_error.response}"
-            
-    except ValueError as e:
-        return f"❌ Configuration Error: {str(e)}"
-    except SlackApiError as e:
-        return f"❌ Slack API Error: {e.response['error']}"
-    except Exception as e:
-        return f"❌ Unexpected Error: {str(e)}"
-
-@mcp.tool("get_thread_replies")
-async def get_thread_replies(channel: str, thread_ts: str, limit: int = 10) -> str:
-    """
-    Get replies from a message thread.
-    
-    Args:
-        channel: Channel ID where the thread is located
-        thread_ts: Timestamp of the parent message
-        limit: Maximum number of replies to return (default: 10, max: 1000)
-    
-    Returns:
-        Formatted thread replies information
-    """
-    try:
-        validate_slack_token()
-        
-        # Initialize async client
-        async_client = await init_async_client()
-        if not async_client:
-            return "❌ Failed to initialize async Slack client"
-        
-        # Get thread replies with rate limiting
-        response = await make_slack_request(
-            async_client.conversations_replies,
-            channel=channel,
-            ts=thread_ts,
-            limit=limit
-        )
-        
-        if response:
-            messages = response.get('messages', [])
-            
-            result = f"🧵 **Thread Replies** ({len(messages)} messages)\n\n"
-            
-            if messages:
-                # First message is the parent
-                parent = messages[0]
-                result += f"**📝 Parent Message:**\n"
-                result += f"• **User:** <@{parent.get('user', 'Unknown')}>\n"
-                result += f"• **Time:** {datetime.fromtimestamp(float(parent.get('ts', 0))).strftime('%Y-%m-%d %H:%M:%S')}\n"
-                result += f"• **Text:** {parent.get('text', 'No text')[:150]}{'...' if len(parent.get('text', '')) > 150 else ''}\n\n"
-                
-                # Show replies
-                if len(messages) > 1:
-                    result += f"**💬 Replies ({len(messages) - 1}):**\n"
-                    for i, reply in enumerate(messages[1:], 1):
-                        result += f"\n**{i}.** <@{reply.get('user', 'Unknown')}>\n"
-                        result += f"   📅 {datetime.fromtimestamp(float(reply.get('ts', 0))).strftime('%Y-%m-%d %H:%M:%S')}\n"
-                        result += f"   💭 {reply.get('text', 'No text')[:100]}{'...' if len(reply.get('text', '')) > 100 else ''}\n"
+            # File size formatting
+            if file_info.get('size'):
+                size = file_info['size']
+                if size < 1024:
+                    size_str = f"{size} bytes"
+                elif size < 1024 * 1024:
+                    size_str = f"{size / 1024:.1f} KB"
                 else:
-                    result += "**💬 No replies yet**\n"
-            else:
-                result += "❌ No messages found in thread\n"
+                    size_str = f"{size / (1024 * 1024):.1f} MB"
+                result += f"• **Size:** {size_str}\n"
+            
+            if file_info.get('mimetype'):
+                result += f"• **Type:** {file_info['mimetype']}\n"
+            elif filetype:
+                result += f"• **Type:** {filetype}\n"
+            
+            # Channels the file was shared to
+            result += f"\n• **Shared to:** {channels}\n"
+            
+            if initial_comment:
+                result += f"• **Comment:** {initial_comment}\n"
+            
+            # File URLs
+            if file_info.get('url_private'):
+                result += f"\n• **URL:** {file_info['url_private']}\n"
+            
+            if file_info.get('permalink'):
+                result += f"• **Permalink:** {file_info['permalink']}\n"
+            
+            # Upload timestamp
+            if file_info.get('created'):
+                upload_time = datetime.fromtimestamp(file_info['created']).strftime('%Y-%m-%d %H:%M:%S')
+                result += f"\n• **Uploaded at:** {upload_time}\n"
             
             return result
         else:
-            return "❌ Failed to get thread replies: API request failed"
+            return "❌ Failed to upload file: API request failed"
             
     except ValueError as e:
         return f"❌ Configuration Error: {str(e)}"
@@ -978,24 +711,28 @@ async def get_thread_replies(channel: str, thread_ts: str, limit: int = 10) -> s
     except Exception as e:
         return f"❌ Unexpected Error: {str(e)}"
 
-@mcp.tool("send_direct_message")
-async def send_direct_message(
+@mcp.tool("upload_file_to_user")
+async def upload_file_to_user(
     user: str,
-    text: str,
-    blocks: Optional[List[Dict[str, Any]]] = None,
-    attachments: Optional[List[Dict[str, Any]]] = None
+    content: str,
+    filename: Optional[str] = None,
+    filetype: Optional[str] = None,
+    title: Optional[str] = None,
+    initial_comment: Optional[str] = None
 ) -> str:
     """
-    Send a direct message to a specific user.
+    Upload a file directly to a user via direct message.
     
     Args:
-        user: User ID or email address to send the message to
-        text: Message text to send
-        blocks: Optional Slack blocks for rich formatting
-        attachments: Optional message attachments
+        user: User ID or email address to send the file to
+        content: File content as text
+        filename: Name of the file
+        filetype: File type (e.g., 'text', 'json', 'csv')
+        title: Title of the file
+        initial_comment: Initial comment for the file
     
     Returns:
-        Formatted direct message result
+        File upload result with details
     """
     try:
         validate_slack_token()
@@ -1005,48 +742,70 @@ async def send_direct_message(
         if not async_client:
             return "❌ Failed to initialize async Slack client"
         
-        # First, open a direct message conversation
+        # First, open a DM with the user if needed
         dm_response = await make_slack_request(
             async_client.conversations_open,
             users=user
         )
         
         if not dm_response:
-            return "❌ Failed to open direct message conversation"
+            return "❌ Failed to open direct message with user"
         
         dm_channel = dm_response.get('channel', {}).get('id')
         if not dm_channel:
-            return "❌ Failed to get direct message channel ID"
+            return "❌ Could not get DM channel ID"
         
-        # Send message to the DM channel
+        # Upload file to the DM channel
         response = await make_slack_request(
-            async_client.chat_postMessage,
-            channel=dm_channel,
-            text=text,
-            blocks=blocks,
-            attachments=attachments
+            async_client.files_upload_v2,
+            content=content,
+            filename=filename or "file.txt",
+            title=title,
+            initial_comment=initial_comment,
+            channel=dm_channel
         )
         
         if response:
-            result = "✅ **Direct Message Sent Successfully**\n\n"
-            result += f"• **Recipient:** <@{user}>\n"
-            result += f"• **DM Channel:** {dm_channel}\n"
-            result += f"• **Timestamp:** {response.get('ts', 'N/A')}\n"
-            result += f"• **Message:** {text[:100]}{'...' if len(text) > 100 else ''}\n"
+            file_info = response["file"]
             
-            if blocks:
-                result += f"• **Rich Formatting:** {len(blocks)} block(s)\n"
-                
+            result = "✅ **File Uploaded to User Successfully**\n\n"
+            result += f"• **Recipient:** <@{user}>\n"
+            result += f"• **File ID:** {file_info.get('id', 'N/A')}\n"
+            result += f"• **Name:** {file_info.get('name', 'N/A')}\n"
+            
+            if file_info.get('title'):
+                result += f"• **Title:** {file_info['title']}\n"
+            
+            # File size formatting
+            if file_info.get('size'):
+                size = file_info['size']
+                if size < 1024:
+                    size_str = f"{size} bytes"
+                elif size < 1024 * 1024:
+                    size_str = f"{size / 1024:.1f} KB"
+                else:
+                    size_str = f"{size / (1024 * 1024):.1f} MB"
+                result += f"• **Size:** {size_str}\n"
+            
+            if initial_comment:
+                result += f"\n• **Comment:** {initial_comment}\n"
+            
+            if file_info.get('permalink'):
+                result += f"\n• **Permalink:** {file_info['permalink']}\n"
+            
             return result
         else:
-            return "❌ Failed to send direct message: API request failed"
-            
+            return "❌ Failed to upload file to user: API request failed"
+                
     except ValueError as e:
         return f"❌ Configuration Error: {str(e)}"
     except SlackApiError as e:
         return f"❌ Slack API Error: {e.response['error']}"
     except Exception as e:
         return f"❌ Unexpected Error: {str(e)}"
+
+# Phase 4: Extended Messaging Tools
+# Tools moved to slack_mcp.tools.message_management
 
 # Phase 5: Channel Management Tools
 

@@ -88,6 +88,29 @@ slack_mcp/
 - All tool signatures and docstrings preserved
 - Tools auto-register via decorators
 
+## Stage 4: Extract Message Management Tools (Completed)
+
+### What was done:
+1. Created `tools/message_management.py` with Phase 4 extended messaging tools:
+   - **update_message**: Edit existing messages
+   - **delete_message**: Delete messages
+   - **pin_message**: Pin messages to channels
+   - **unpin_message**: Unpin messages from channels
+   - **get_message_permalink**: Get permanent links to messages
+   - **schedule_message**: Schedule messages for future delivery
+   - **get_thread_replies**: Get replies in a thread
+   - **send_direct_message**: Send DMs to users
+
+2. Updated imports and registration in main server
+3. Removed ~440 lines from main server file
+4. Used register_tools pattern for clean registration
+
+### Module Structure:
+- Clear separation between core messaging (send_message) and management tools
+- All async functions maintained properly
+- Consistent error handling and formatting
+- Cleaned up core.py to only contain Phase 1-3 tools (removed Phase 7 tools)
+
 ## Next Steps
 
 ### Stage 4-7: Extract Remaining Tool Groups
