@@ -2,5 +2,6 @@
 
 # Import all tool modules to ensure registration
 from . import core
+from . import message_management
 
-__all__ = ["core"]
+__all__ = ["core", "message_management"]
