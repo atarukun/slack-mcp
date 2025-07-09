@@ -80,22 +80,51 @@ def register_tools(mcp):
                     if upload_response.status != 200:
                         return f"❌ Failed to upload file content: HTTP {upload_response.status}"
             
+            # Parse channels - can be comma-separated list
+            channel_list = [ch.strip() for ch in channels.split(',') if ch.strip()]
+            
             # Complete the upload process
             complete_response = await make_slack_request(
                 async_client.files_completeUploadExternal,
                 files=[{
                     "id": upload_url_response['file_id'],
                     "title": title or filename or "file.txt"
-                }]
+                }],
+                channel_id=channel_list[0] if channel_list else None,
+                initial_comment=initial_comment
             )
             
             if complete_response:
+                file_id = upload_url_response['file_id']
+                files = complete_response.get('files', [])
+                
+                # Get the file info from the response
+                file_info = files[0] if files else {}
+                
                 result = "✅ **File Uploaded Successfully**\n\n"
-                result += f"• **File ID:** {upload_url_response['file_id']}\n"
+                result += f"• **File ID:** {file_id}\n"
                 result += f"• **Name:** {filename or 'file.txt'}\n"
-                result += f"• **Shared to:** {channels}\n"
+                if title:
+                    result += f"• **Title:** {title}\n"
+                
+                # File size from content
+                size = len(content.encode('utf-8'))
+                if size < 1024:
+                    size_str = f"{size} bytes"
+                elif size < 1024 * 1024:
+                    size_str = f"{size / 1024:.1f} KB"
+                else:
+                    size_str = f"{size / (1024 * 1024):.1f} MB"
+                result += f"• **Size:** {size_str}\n"
+                
+                result += f"\n• **Shared to:** {channels}\n"
                 if initial_comment:
                     result += f"• **Comment:** {initial_comment}\n"
+                
+                # Add permalink if available
+                if file_info.get('permalink'):
+                    result += f"\n• **Permalink:** {file_info['permalink']}\n"
+                    
                 return result
             else:
                 return "❌ Failed to upload file: API request failed"
