@@ -7,16 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.4.1] - 2025-07-09
 
-### Removed
-- **All File Operations Tools** - Removed due to ongoing issues with Slack's file upload APIs
-  - Removed `upload_file`
-  - Removed `upload_file_to_user`
-  - Removed `list_files`
-  - Removed `get_file_info`
-  - Removed `get_file_content`
-  - Removed `delete_file`
-  - Removed `share_file`
-
 ### Changed
 - Tool count reduced from 36 to 29 production-ready tools
 - Simplified codebase by removing problematic file functionality

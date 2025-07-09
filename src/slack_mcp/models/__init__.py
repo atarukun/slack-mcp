@@ -5,7 +5,6 @@ from .schemas import (
     ChannelInfo,
     MessageInfo,
     UserInfo,
-    FileUploadInfo,
 )
 
 __all__ = [
@@ -13,5 +12,4 @@ __all__ = [
     "ChannelInfo",
     "MessageInfo",
     "UserInfo",
-    "FileUploadInfo",
 ]
