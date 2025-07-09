@@ -80,7 +80,7 @@ def register_tools(mcp):
             
             # Add the first channel if provided
             if channel_list:
-                upload_params["channel_id"] = channel_list[0]
+                upload_params["channel"] = channel_list[0]
             
             # Add filetype if provided
             if filetype:
