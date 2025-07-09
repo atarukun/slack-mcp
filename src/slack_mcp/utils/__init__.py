@@ -10,9 +10,6 @@ from .client import (
     get_async_slack_client,
 )
 
-# Formatting utilities
-# Currently empty after removing file-related formatting
-
 # Error handling and rate limiting utilities
 from .errors import (
     MIN_API_INTERVAL,

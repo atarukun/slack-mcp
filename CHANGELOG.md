@@ -8,9 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.4.1] - 2025-07-09
 
 ### Changed
-- Tool count reduced from 36 to 29 production-ready tools
-- Simplified codebase by removing problematic file functionality
-- Updated documentation to reflect removal of file operations
+- Cleaned up core tools
 
 ## [1.3.0] - 2024-01-04
 
