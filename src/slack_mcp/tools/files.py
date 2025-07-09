@@ -63,15 +63,32 @@ def register_tools(mcp):
             if not async_client:
                 return "❌ Failed to initialize async Slack client"
             
-            # Use files_upload with rate limiting
+            # Use files_upload_v2 with rate limiting
+            # Note: files_upload_v2 requires channel_id parameter instead of channels
+            # and handles multiple channels differently
+            
+            # Parse channels - can be comma-separated list
+            channel_list = [ch.strip() for ch in channels.split(',')]
+            
+            # For files_upload_v2, we need to upload first, then share to additional channels
+            upload_params = {
+                "content": content,
+                "filename": filename or "file.txt",
+                "title": title,
+                "initial_comment": initial_comment
+            }
+            
+            # Add the first channel if provided
+            if channel_list:
+                upload_params["channel_id"] = channel_list[0]
+            
+            # Add filetype if provided
+            if filetype:
+                upload_params["filetype"] = filetype
+            
             response = await make_slack_request(
-                async_client.files_upload,
-                channels=channels,
-                content=content,
-                filename=filename or "file.txt",
-                filetype=filetype,
-                title=title,
-                initial_comment=initial_comment
+                async_client.files_upload_v2,
+                **upload_params
             )
             
             if response:
@@ -99,6 +116,25 @@ def register_tools(mcp):
                     result += f"• **Type:** {file_info['mimetype']}\n"
                 elif filetype:
                     result += f"• **Type:** {filetype}\n"
+                
+                # Handle sharing to additional channels if needed
+                if len(channel_list) > 1:
+                    # Share to additional channels
+                    file_id = file_info.get('id')
+                    if file_id:
+                        for channel in channel_list[1:]:
+                            try:
+                                # Share the file to additional channels
+                                share_params = {
+                                    "file": file_id,
+                                    "channel": channel
+                                }
+                                await make_slack_request(
+                                    async_client.files_sharedPublicURL,
+                                    **share_params
+                                )
+                            except Exception as e:
+                                logger.warning(f"Failed to share to {channel}: {e}")
                 
                 # Channels the file was shared to
                 result += f"\n• **Shared to:** {channels}\n"
