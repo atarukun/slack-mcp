@@ -5,31 +5,22 @@ All notable changes to the Slack MCP Server will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.4.0] - 2025-07-04
+## [1.4.1] - 2025-07-09
 
-### Added
-- **Phase 7: File Operations Tools** (7 tools, including 1 enhanced)
-  - Enhanced `upload_file` - Now supports uploading to users as well as channels
-  - `upload_file_to_user` - Upload files directly to a user via DM
-  - `list_files` - List and filter files in the workspace with pagination
-  - `get_file_info` - Get detailed information about a specific file
-  - `get_file_content` - Download and retrieve text file content
-  - `delete_file` - Delete files from the workspace
-  - `share_file` - Share existing files to additional channels
+### Removed
+- **All File Operations Tools** - Removed due to ongoing issues with Slack's file upload APIs
+  - Removed `upload_file`
+  - Removed `upload_file_to_user`
+  - Removed `list_files`
+  - Removed `get_file_info`
+  - Removed `get_file_content`
+  - Removed `delete_file`
+  - Removed `share_file`
 
 ### Changed
-- Enhanced `upload_file` tool to support user uploads in addition to channels
-- Tool count increased from 30 to 36 production-ready tools
-- Improved file type detection with MIME type support
-- Added file size validation and handling for large files
-
-### Technical Improvements
-- Added pagination support for file listings
-- Implemented file content download with size limits
-- Enhanced file sharing capabilities with comment support
-- Added comprehensive file metadata retrieval
-- Improved error handling for file operations
-- Support for various text file types (json, xml, yaml, python, etc.)
+- Tool count reduced from 36 to 29 production-ready tools
+- Simplified codebase by removing problematic file functionality
+- Updated documentation to reflect removal of file operations
 
 ## [1.3.0] - 2024-01-04
 
@@ -160,7 +151,6 @@ This release adds comprehensive messaging management capabilities, expanding fro
 - **Message Management**: `update_message`, `delete_message`, `pin_message`, `unpin_message`
 - **Advanced Features**: `schedule_message`, `get_message_permalink`, `get_thread_replies`
 - **Workspace Discovery**: `list_channels`, `get_channel_info`, `get_user_info`
-- **File Operations**: `upload_file`
 
 ### 🧪 **Testing & Validation**
 
@@ -175,7 +165,6 @@ This release adds comprehensive messaging management capabilities, expanding fro
 Phase 4 completion sets the foundation for:
 - **Phase 5**: Channel Management Tools
 - **Phase 6**: User Management Tools  
-- **Phase 7**: Advanced File Operations
 - **Phases 8-13**: Search, interactions, analytics, and production features
 
 ### 🏆 **Achievement Summary**
@@ -223,11 +212,6 @@ This is the first stable release of the Slack MCP Server, providing comprehensiv
 - **Admin Detection**: Identify admin users and bot accounts
 - **Email Lookup**: Support for user lookup by email address
 
-#### 📁 File Operations
-- **upload_file**: Upload text files to Slack channels
-- **Multi-channel Upload**: Upload files to multiple channels at once
-- **File Metadata**: Support for titles, comments, and file type specification
-- **Text Content**: Upload text content directly without file system access
 
 #### 🔌 Connection & Testing
 - **test_slack_connection**: Comprehensive connection testing and workspace info
@@ -316,26 +300,25 @@ This is the first stable release of the Slack MCP Server, providing comprehensiv
 
 ### 📊 Current Capabilities
 
-**7 Production-Ready MCP Tools:**
+**6 Production-Ready MCP Tools:**
 1. `set_slack_token` - Configure authentication
 2. `test_slack_connection` - Verify connectivity and show workspace info
 3. `send_message` - Send messages with full formatting support
 4. `get_channel_info` - Retrieve detailed channel information
 5. `list_channels` - Explore workspace channels with categorization
 6. `get_user_info` - Get comprehensive user profiles
-7. `upload_file` - Upload files with metadata and comments
 
 **Workspace Tested:**
 - Successfully tested with ILDM workspace
 - 4 public channels discovered and interacted with
-- Message sending, channel listing, and file operations verified
+- Message sending and channel listing verified
 - Full authentication and rate limiting confirmed working
 
 ### 🔜 Future Development
 
 The roadmap includes 10 additional phases for advanced features:
 - **Phases 4-6**: Extended messaging, channel management, and user operations
-- **Phases 7-9**: File operations, search capabilities, and interactive elements
+- **Phases 7-9**: Search capabilities and interactive elements
 - **Phases 10-13**: Advanced features, analytics, and production deployment
 
 ### 👨‍💻 Attribution
@@ -356,7 +339,7 @@ The roadmap includes 10 additional phases for advanced features:
 ## Version History
 
 ### [1.0.0] - 2025-07-03
-- Initial stable release with 7 core tools
+- Initial stable release with 6 core tools
 - Full Docker containerization
 - MCP protocol compliance
 - Comprehensive documentation
