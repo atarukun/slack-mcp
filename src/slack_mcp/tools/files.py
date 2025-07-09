@@ -66,7 +66,8 @@ def register_tools(mcp):
             # Get temporary upload URL
             upload_url_response = await make_slack_request(
                 async_client.files_getUploadURLExternal,
-                length=len(content)
+                filename=filename or "file.txt",
+                length=len(content.encode('utf-8'))
             )
             
             if not upload_url_response or not upload_url_response.get('upload_url'):
@@ -76,7 +77,7 @@ def register_tools(mcp):
             
             # Upload file to the temporary URL
             async with aiohttp.ClientSession() as session:
-                async with session.put(upload_url, data=content) as upload_response:
+                async with session.put(upload_url, data=content.encode('utf-8')) as upload_response:
                     if upload_response.status != 200:
                         return f"❌ Failed to upload file content: HTTP {upload_response.status}"
             
