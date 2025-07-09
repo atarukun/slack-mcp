@@ -92,7 +92,7 @@ def register_tools(mcp):
             )
             
             if response:
-                file_info = response.get('file', {})
+                file_info = response["file"]
                 
                 result = "✅ **File Uploaded Successfully**\n\n"
                 result += f"• **File ID:** {file_info.get('id', 'N/A')}\n"
