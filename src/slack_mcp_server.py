@@ -28,8 +28,7 @@ from slack_mcp.tools import (
     core,
     message_management,
     channel_management,
-    user_management,
-    files
+    user_management
 )
 
 # Register all tools
@@ -37,7 +36,6 @@ core.register_tools(mcp)
 message_management.register_tools(mcp)
 channel_management.register_tools(mcp)
 user_management.register_tools(mcp)
-files.register_tools(mcp)
 
 def run_server():
     """Run the MCP server for Slack integration."""
