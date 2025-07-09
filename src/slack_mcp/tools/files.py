@@ -63,15 +63,25 @@ def register_tools(mcp):
             if not async_client:
                 return "❌ Failed to initialize async Slack client"
             
+            # Log the upload parameters for debugging
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.info(f"Attempting file upload with params: channels={channels}, filename={filename or 'file.txt'}, title={title}, content_length={len(content) if content else 0}")
+            
             # Use files_upload_v2 which is the working method
-            response = await make_slack_request(
-                async_client.files_upload_v2,
-                channels=channels,
-                content=content,
-                filename=filename or "file.txt",
-                title=title,
-                initial_comment=initial_comment
-            )
+            try:
+                response = await make_slack_request(
+                    async_client.files_upload_v2,
+                    channels=channels,
+                    content=content,
+                    filename=filename or "file.txt",
+                    title=title,
+                    initial_comment=initial_comment
+                )
+                logger.info(f"Upload response: {response}")
+            except Exception as upload_error:
+                logger.error(f"Upload error: {type(upload_error).__name__}: {str(upload_error)}")
+                raise
             
             if response:
                 file_info = response.get('file', {})
@@ -103,7 +113,8 @@ def register_tools(mcp):
                     
                 return result
             else:
-                return "❌ Failed to upload file: API request failed"
+                logger.error("Upload failed: No response received from Slack API")
+                return "❌ Failed to upload file: No response received from Slack API"
                 
         except ValueError as e:
             return f"❌ Configuration Error: {str(e)}"
