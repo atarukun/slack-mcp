@@ -389,16 +389,24 @@ def register_tools(mcp):
                           'ruby', 'php', 'swift', 'kotlin', 'scala', 'r', 'sql', 'shell', 'yaml', 
                           'json', 'xml', 'html', 'css', 'markdown', 'csv', 'log', 'conf', 'ini']
             
+            # Also check file extension if type is not available
+            text_extensions = ['.txt', '.text', '.js', '.py', '.java', '.c', '.cpp', '.cs', '.go', '.rs',
+                             '.rb', '.php', '.swift', '.kt', '.scala', '.r', '.sql', '.sh', '.yaml', '.yml',
+                             '.json', '.xml', '.html', '.css', '.md', '.csv', '.log', '.conf', '.ini']
+            
+            file_extension = os.path.splitext(file_name.lower())[1]
+            
             is_text_file = (
                 file_type.lower() in text_types or 
                 mimetype.startswith('text/') or 
                 mimetype == 'application/json' or
                 mimetype == 'application/xml' or
-                mimetype == 'application/javascript'
+                mimetype == 'application/javascript' or
+                file_extension in text_extensions  # Check file extension as fallback
             )
             
             if not is_text_file:
-                return f"❌ Cannot display content: File '{file_name}' is not a text file (type: {file_type or mimetype})"
+                return f"❌ Cannot display content: File '{file_name}' is not a text file (type: {file_type or mimetype or 'unknown'})"
             
             # Get download URL
             download_url = file_info.get('url_private_download')
