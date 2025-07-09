@@ -10,9 +10,6 @@ from .client import (
     get_async_slack_client,
 )
 
-# Formatting utilities
-from .formatting import format_file_info
-
 # Error handling and rate limiting utilities
 from .errors import (
     MIN_API_INTERVAL,
@@ -29,7 +26,6 @@ __all__ = [
     "set_slack_client",
     "get_async_slack_client",
     # Formatting utilities
-    "format_file_info",
     # Error handling utilities
     "MIN_API_INTERVAL",
     "rate_limit_check",

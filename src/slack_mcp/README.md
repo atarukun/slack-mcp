@@ -35,7 +35,7 @@ slack_mcp/
      - `MIN_API_INTERVAL`: Rate limit interval constant
    
    - **formatting.py**: Data formatting utilities
-     - `format_file_info()`: Formats file information for display
+     - Currently empty after removing file-related formatting
 
 3. Updated imports in `slack_mcp_server.py` to use the new package structure
 4. Maintained backward compatibility with try/except import fallback
@@ -54,7 +54,6 @@ slack_mcp/
    - **ChannelInfo**: Channel information request model
    - **MessageInfo**: Message sending request model
    - **UserInfo**: User information request model  
-   - **FileUploadInfo**: File upload request model
 
 2. Updated `models/__init__.py` to export all models
 3. Removed model definitions from `slack_mcp_server.py`
@@ -76,7 +75,6 @@ slack_mcp/
    - **get_channel_info**: Channel information retrieval
    - **list_channels**: Channel listing
    - **get_user_info**: User information retrieval
-   - **upload_file**: Basic file upload
 
 2. Updated `tools/__init__.py` to import core module
 3. Removed ~393 lines from main server file

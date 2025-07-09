@@ -69,16 +69,6 @@ See [CONFIGURATION_GUIDE.md](CONFIGURATION_GUIDE.md) for detailed setup instruct
 - Admin and bot account detection
 - Email-based user lookup
 
-### 📁 **File Operations**
-- **upload_file**: Upload files to channels or users with metadata
-- **upload_file_to_user**: Direct file uploads to users via DM
-- **list_files**: Browse workspace files with filtering and pagination
-- **get_file_info**: Detailed file metadata and sharing information
-- **get_file_content**: Download and retrieve text file content
-- **delete_file**: Remove files from the workspace
-- **share_file**: Share existing files to additional channels
-- Support for various file types with MIME type detection
-- File size validation and large file handling
 
 ### 🔌 **Connection & Testing**
 - **test_slack_connection**: Comprehensive connectivity testing
@@ -104,9 +94,9 @@ See [CONFIGURATION_GUIDE.md](CONFIGURATION_GUIDE.md) for detailed setup instruct
 
 ## 📊 Current Status
 
-**Version**: 1.4.0 (Phase 7 Release)  
-**Phases Completed**: 7 of 13 (File operations complete)  
-**Tools Available**: 36 production-ready MCP tools  
+**Version**: 1.4.1 (File operations removed)  
+**Phases Completed**: 6 of 13  
+**Tools Available**: 29 production-ready MCP tools
 **Testing**: Verified with ILDM workspace
 
 ### **Available Tools**
@@ -148,14 +138,6 @@ See [CONFIGURATION_GUIDE.md](CONFIGURATION_GUIDE.md) for detailed setup instruct
 28. **`get_user_timezone`** - Get a user's timezone information
 29. **`get_user_conversations`** - List all conversations a user is member of
 
-#### **File Operations Tools (Phase 7)**
-30. **`upload_file`** - Upload files to channels or users with metadata (enhanced)
-31. **`upload_file_to_user`** - Upload files directly to a user via DM
-32. **`list_files`** - List and filter files in the workspace with pagination
-33. **`get_file_info`** - Get detailed information about a specific file
-34. **`get_file_content`** - Download and retrieve text file content
-35. **`delete_file`** - Delete files from the workspace
-36. **`share_file`** - Share existing files to additional channels
 
 ## 📖 Documentation
 
@@ -208,7 +190,7 @@ Contributions are welcome! This project follows a structured development roadmap
 - **Phases 1-3**: ✅ Core implementation (COMPLETED)
 - **Phases 4-5**: ✅ Extended messaging, channel management (COMPLETED)
 - **Phase 6**: User Management with basic tools (Completely moved more advanced user management to Phase 10)
-- **Phases 7-9**: Advanced file operations, search, interactive elements
+- **Phases 7-9**: Search, interactive elements, and other advanced features
 - **Phases 10-13**: Analytics, workflows, production features
 
 See [ROADMAP.md](ROADMAP.md) for detailed development phases.

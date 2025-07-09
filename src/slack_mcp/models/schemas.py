@@ -30,11 +30,3 @@ class UserInfo(BaseModel):
     user: str = Field(description="User ID or email address")
 
 
-class FileUploadInfo(BaseModel):
-    """Model for file upload requests."""
-    channels: str = Field(description="Comma-separated list of channel IDs or names")
-    content: Optional[str] = Field(None, description="File content as text")
-    filename: Optional[str] = Field(None, description="Name of the file")
-    filetype: Optional[str] = Field(None, description="File type (e.g., 'text', 'json', 'csv')")
-    title: Optional[str] = Field(None, description="Title of the file")
-    initial_comment: Optional[str] = Field(None, description="Initial comment for the file")

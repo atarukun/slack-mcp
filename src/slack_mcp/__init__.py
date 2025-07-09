@@ -1,6 +1,4 @@
 """Slack MCP Server package."""
 
-# The mcp instance will be imported by tools when needed
-# This avoids circular imports
-
-__all__ = []
+# Avoid circular imports - these will be imported when needed
+__all__ = ['mcp', 'run_server']

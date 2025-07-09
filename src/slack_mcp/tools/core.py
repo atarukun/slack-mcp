@@ -21,7 +21,6 @@ from ..models.schemas import (
     ChannelInfo,
     MessageInfo,
     UserInfo,
-    FileUploadInfo,
 )
 
 
@@ -485,96 +484,4 @@ def register_tools(mcp):
         except Exception as e:
             return f"❌ Unexpected Error: {str(e)}"
 
-    @mcp.tool("upload_file_to_user")
-    async def upload_file_to_user(
-        user: str,
-        content: str,
-        filename: Optional[str] = None,
-        filetype: Optional[str] = None,
-        title: Optional[str] = None,
-        initial_comment: Optional[str] = None
-    ) -> str:
-        """
-        Upload a file directly to a user via direct message.
-        
-        Args:
-            user: User ID or email address to send the file to
-            content: File content as text
-            filename: Name of the file
-            filetype: File type (e.g., 'text', 'json', 'csv')
-            title: Title of the file
-            initial_comment: Initial comment for the file
-        
-        Returns:
-            File upload result with details
-        """
-        try:
-            validate_slack_token()
-            
-            # Initialize async client
-            async_client = await init_async_client()
-            if not async_client:
-                return "❌ Failed to initialize async Slack client"
-            
-            # First, open a DM with the user if needed
-            dm_response = await make_slack_request(
-                async_client.conversations_open,
-                users=user
-            )
-            
-            if not dm_response:
-                return "❌ Failed to open direct message with user"
-            
-            dm_channel = dm_response.get('channel', {}).get('id')
-            if not dm_channel:
-                return "❌ Could not get DM channel ID"
-            
-            # Upload file to the DM channel
-            response = await make_slack_request(
-                async_client.files_upload_v2,
-                content=content,
-                filename=filename or "file.txt",
-                title=title,
-                initial_comment=initial_comment,
-                channel=dm_channel
-            )
-            
-            if response:
-                file_info = response["file"]
-                
-                result = "✅ **File Uploaded to User Successfully**\n\n"
-                result += f"• **Recipient:** <@{user}>\n"
-                result += f"• **File ID:** {file_info.get('id', 'N/A')}\n"
-                result += f"• **Name:** {file_info.get('name', 'N/A')}\n"
-                
-                if file_info.get('title'):
-                    result += f"• **Title:** {file_info['title']}\n"
-                
-                # File size formatting
-                if file_info.get('size'):
-                    size = file_info['size']
-                    if size < 1024:
-                        size_str = f"{size} bytes"
-                    elif size < 1024 * 1024:
-                        size_str = f"{size / 1024:.1f} KB"
-                    else:
-                        size_str = f"{size / (1024 * 1024):.1f} MB"
-                    result += f"• **Size:** {size_str}\n"
-                
-                if initial_comment:
-                    result += f"\n• **Comment:** {initial_comment}\n"
-                
-                if file_info.get('permalink'):
-                    result += f"\n• **Permalink:** {file_info['permalink']}\n"
-                
-                return result
-            else:
-                return "❌ Failed to upload file to user: API request failed"
-                
-        except ValueError as e:
-            return f"❌ Configuration Error: {str(e)}"
-        except SlackApiError as e:
-            return f"❌ Slack API Error: {e.response['error']}"
-        except Exception as e:
-            return f"❌ Unexpected Error: {str(e)}"
 

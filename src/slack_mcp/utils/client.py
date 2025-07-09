@@ -68,3 +68,21 @@ def set_slack_client(client: WebClient) -> None:
 def get_async_slack_client() -> Optional[AsyncWebClient]:
     """Get the current async Slack client instance."""
     return _async_slack_client
+
+
+def init_client_from_env() -> bool:
+    """Initialize Slack client from environment variable.
+    
+    Returns:
+        bool: True if client was successfully initialized, False otherwise.
+    """
+    global _slack_client
+    
+    slack_token = os.getenv('SLACK_BOT_TOKEN')
+    if slack_token:
+        _slack_client = WebClient(token=slack_token, user_agent_prefix=MCP_USER_AGENT)
+        logger.info("Slack client initialized from SLACK_BOT_TOKEN environment variable")
+        return True
+    else:
+        logger.debug("No SLACK_BOT_TOKEN found in environment")
+        return False
